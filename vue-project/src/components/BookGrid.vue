@@ -2,6 +2,9 @@
 import { computed } from 'vue'
 import BookCardPulled from './BookCardPulled.vue'
 import { booksData } from '../data/books'
+import { useI18n } from '../composables/useI18n'
+
+const { t } = useI18n()
 
 const mappedBooks = computed(() => {
   return booksData.map(b => ({
@@ -19,8 +22,8 @@ defineEmits(['select']);
 <template>
   <section class="book-grid-section container">
     <div class="section-header">
-      <h2 class="section-title">Yaqin atrofda</h2>
-      <a href="#" class="view-all">Hammasi ></a>
+      <h2 class="section-title">{{ t('nearby') }}</h2>
+      <a href="#" class="view-all">{{ t('viewAll') }} ></a>
     </div>
     
     <div class="grid">

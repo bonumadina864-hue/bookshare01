@@ -3,6 +3,9 @@ import { ref, onMounted, defineProps, defineEmits } from 'vue';
 import BookCommentsPanel from './BookCommentsPanel.vue';
 import { db } from '../firebase';
 import { ref as dbRef, onValue, runTransaction } from 'firebase/database';
+import { useI18n } from '../composables/useI18n';
+
+const { t } = useI18n();
 
 const props = defineProps<{
   book: any;
@@ -83,7 +86,7 @@ const toggleBookLike = () => {
       <button class="close-btn" @click="emit('close')">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
       </button>
-      <h2 class="panel-title">Kitob ma'lumotlari</h2>
+      <h2 class="panel-title">{{ t('bookDetails') }}</h2>
       <button class="book-like-btn" :class="{ active: isLiked }" @click="toggleBookLike">
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" :fill="isLiked ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
         <span class="like-count">{{ bookLikes }}</span>
@@ -104,7 +107,7 @@ const toggleBookLike = () => {
         <div class="rating-row">
           <span class="star">⭐</span>
           <span class="rating-val">{{ book.rating }}</span>
-          <span class="reviews-count">({{ book.reviewsCount }} sharh) • ❤️ {{ bookLikes }} likes</span>
+          <span class="reviews-count">({{ book.reviewsCount }} {{ t('reviews') }}) • ❤️ {{ bookLikes }} likes</span>
         </div>
 
         <div class="price-box">
@@ -113,21 +116,21 @@ const toggleBookLike = () => {
         </div>
 
         <div class="section-block">
-          <h3 class="block-title">Kitob haqida</h3>
+          <h3 class="block-title">{{ t('aboutBook') }}</h3>
           <p class="description-text">{{ book.description }}</p>
         </div>
 
         <div class="details-grid">
           <div class="detail-item">
-            <span class="label">Til</span>
+            <span class="label">{{ t('language') }}</span>
             <span class="val">{{ book.details.language }}</span>
           </div>
           <div class="detail-item">
-            <span class="label">Sahifalar</span>
+            <span class="label">{{ t('pages') }}</span>
             <span class="val">{{ book.details.pages }}</span>
           </div>
           <div class="detail-item">
-            <span class="label">Holati</span>
+            <span class="label">{{ t('condition') }}</span>
             <span class="val">{{ book.details.condition }}</span>
           </div>
         </div>
@@ -136,22 +139,23 @@ const toggleBookLike = () => {
           <div class="avatar">{{ book.owner.initials }}</div>
           <div class="owner-info">
             <div class="name">{{ book.owner.name }}</div>
-            <div class="stats">⭐ {{ book.owner.rating }} • {{ book.owner.booksCount }} ta kitob</div>
+            <div class="stats">⭐ {{ book.owner.rating }} • {{ book.owner.booksCount }} {{ t('booksCountText') }}</div>
           </div>
         </div>
       </div>
       
       <div class="panel-actions">
-        <button class="btn-primary">Ijaraga olish</button>
-        <button class="btn-outline">Yozish</button>
+        <button class="btn-primary">{{ t('rentNow') }}</button>
+        <button class="btn-outline">{{ t('writeMessage') }}</button>
         <button class="btn-comments-new" @click="showComments = !showComments">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-          <span>Komentariya</span>
+          <span>{{ t('comments') }}</span>
         </button>
       </div>
     </div>
   </div>
 </template>
+
 
 <style scoped>
 .side-panel {

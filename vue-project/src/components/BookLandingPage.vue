@@ -85,7 +85,7 @@ const closePanel = () => {
               <div class="name-wrapper">
                 <h1 class="user-name" v-if="!isEditingName">
                   {{ userName }}
-                  <button class="edit-btn" @click="isEditingName = true" title="Taxrirlash">
+                  <button class="edit-btn" @click="isEditingName = true" :title="t('edit')">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                   </button>
                 </h1>

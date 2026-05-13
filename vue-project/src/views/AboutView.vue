@@ -1,12 +1,17 @@
+<script setup lang="ts">
+import { useI18n } from '../composables/useI18n';
+const { t } = useI18n();
+</script>
+
 <template>
   <div class="about-page">
     <!-- Hero Section -->
     <section class="about-hero">
       <div class="container">
-        <div class="badge">Biz haqimizda</div>
-        <h1 class="hero-title">Kitobxonlar hamjamiyatini <span class="accent-text">birlashtiramiz</span></h1>
+        <div class="badge">{{ t('about') }}</div>
+        <h1 class="hero-title">{{ t('aboutHeroTitle').split(' ').slice(0, -1).join(' ') }} <span class="accent-text">{{ t('aboutHeroTitle').split(' ').pop() }}</span></h1>
         <p class="hero-desc">
-          BookShare — bu shunchaki platforma emas, balki bilim ulashish va kitobxonlik madaniyatini yuksaltirishga xizmat qiluvchi katta hamjamiyatdir.
+          {{ t('aboutHeroDesc') }}
         </p>
       </div>
     </section>
@@ -15,22 +20,22 @@
     <section class="mission-section">
       <div class="container grid-2">
         <div class="mission-content">
-          <h2 class="section-title">Bizning maqsadimiz</h2>
+          <h2 class="section-title">{{ t('ourMission') }}</h2>
           <p class="text-content">
-            Bizning asosiy maqsadimiz — har bir inson uchun kitoblardan foydalanish imkoniyatini osonlashtirish. Biz odamlarga o'z javonlaridagi o'qilgan kitoblarni boshqalar bilan baham ko'rish, ijaraga berish yoki sotish imkonini beramiz.
+            {{ t('missionText') }}
           </p>
           <div class="stats-grid">
             <div class="stat-item">
               <span class="stat-num">10k+</span>
-              <span class="stat-label">Kitoblar</span>
+              <span class="stat-label">{{ t('statsBooks') }}</span>
             </div>
             <div class="stat-item">
               <span class="stat-num">5k+</span>
-              <span class="stat-label">Foydalanuvchilar</span>
+              <span class="stat-label">{{ t('statsUsers') }}</span>
             </div>
             <div class="stat-item">
               <span class="stat-num">20+</span>
-              <span class="stat-label">Shaharlar</span>
+              <span class="stat-label">{{ t('statsCities') }}</span>
             </div>
           </div>
         </div>
@@ -45,27 +50,27 @@
     <!-- Features Section -->
     <section class="features-section">
       <div class="container">
-        <h2 class="section-title center">Nima uchun BookShare?</h2>
+        <h2 class="section-title center">{{ t('whyChoose') }}</h2>
         <div class="features-grid">
           <div class="feature-card">
             <div class="f-icon">🔄</div>
-            <h3>Oson almashish</h3>
-            <p>O'zingiz o'qigan kitobni boshqa qiziqarli asarga mutlaqo bepul almashtiring.</p>
+            <h3>{{ t('feature1Title') }}</h3>
+            <p>{{ t('feature1Desc') }}</p>
           </div>
           <div class="feature-card">
             <div class="f-icon">💰</div>
-            <h3>Qo'shimcha daromad</h3>
-            <p>Shaxsiy kutubxonangizdagi kitoblarni ijaraga bering va foyda ko'ring.</p>
+            <h3>{{ t('feature2Title') }}</h3>
+            <p>{{ t('feature2Desc') }}</p>
           </div>
           <div class="feature-card">
             <div class="f-icon">📍</div>
-            <h3>Yaqin atrofdan topish</h3>
-            <p>Geolokatsiya tizimi orqali uyingizga eng yaqin bo'lgan kitoblarni toping.</p>
+            <h3>{{ t('feature3Title') }}</h3>
+            <p>{{ t('feature3Desc') }}</p>
           </div>
           <div class="feature-card">
             <div class="f-icon">🛡️</div>
-            <h3>Xavfsiz bitim</h3>
-            <p>Har bir foydalanuvchi reytingi va sharhlar orqali ishonchli hamkorlarni tanlang.</p>
+            <h3>{{ t('feature4Title') }}</h3>
+            <p>{{ t('feature4Desc') }}</p>
           </div>
         </div>
       </div>
@@ -75,14 +80,15 @@
     <section class="join-section">
       <div class="container">
         <div class="join-card">
-          <h2>Bugunoq bizga qo'shiling!</h2>
-          <p>O'z kitoblaringizni ro'yxatdan o'tkazing va kitobxonlar dunyosiga kiring.</p>
-          <router-link to="/register" class="cta-btn">Boshlash</router-link>
+          <h2>{{ t('joinTitle') }}</h2>
+          <p>{{ t('joinDesc') }}</p>
+          <router-link to="/register" class="cta-btn">{{ t('startNow') }}</router-link>
         </div>
       </div>
     </section>
   </div>
 </template>
+
 
 <style scoped>
 .about-page {
