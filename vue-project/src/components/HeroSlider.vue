@@ -1,32 +1,35 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { useI18n } from '../composables/useI18n'
 
+const { t } = useI18n()
 const currentSlide = ref(0)
-const slides = [
+
+const slides = computed(() => [
   {
     img: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&q=80&w=1000',
-    title: 'Yaqin atrofdagi kitoblarni toping',
-    desc: 'Minglab kitoblar orasidan o\'zingizga ma\'qulini toping va bevosita egalari bilan bog\'laning.',
+    title: t('heroTitle1'),
+    desc: t('heroDesc1'),
     color: '#3b82f6'
   },
   {
     img: 'https://images.unsplash.com/photo-1529148482759-b35b25c5f217?auto=format&fit=crop&q=80&w=1000',
-    title: 'Ishonchli hamjamiyat bilan ulashing',
-    desc: 'Hamjamiyatimiz a\'zolari bilan xavfsiz va ishonchli bitimlar tuzing, bilim ulashishda davom eting.',
+    title: t('heroTitle2'),
+    desc: t('heroDesc2'),
     color: '#10b981'
   },
   {
     img: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=1000',
-    title: 'Kutubxonangizdan daromad oling',
-    desc: 'O\'qilgan kitoblaringizni ijaraga bering yoki soting va qo\'shimcha daromadga ega bo\'ling.',
+    title: t('heroTitle3'),
+    desc: t('heroDesc3'),
     color: '#8b5cf6'
   }
-]
+])
 
 let interval: any
 onMounted(() => {
   interval = setInterval(() => {
-    currentSlide.value = (currentSlide.value + 1) % slides.length
+    currentSlide.value = (currentSlide.value + 1) % slides.value.length
   }, 6000)
 })
 
@@ -37,6 +40,7 @@ onUnmounted(() => {
 const goToSlide = (index: number) => {
   currentSlide.value = index
 }
+
 </script>
 
 <template>
@@ -45,7 +49,7 @@ const goToSlide = (index: number) => {
       <div v-for="(slide, index) in slides" :key="index" class="slide">
         <div class="slide-grid container">
           <div class="slide-text">
-            <div class="badge">BookShare Platformasi</div>
+            <div class="badge">{{ t('platformBadge') }}</div>
             <h1 class="title">{{ slide.title }}</h1>
             <p class="description">{{ slide.desc }}</p>
             <div class="dots">

@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue';
+import { useI18n } from '../composables/useI18n';
+
+const { t } = useI18n();
 
 const props = defineProps<{
   book: any;
@@ -14,7 +17,7 @@ const emit = defineEmits(['close']);
       <button class="close-btn" @click="emit('close')">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
       </button>
-      <h2 class="panel-title">Kitob ma'lumotlari</h2>
+      <h2 class="panel-title">{{ t('bookDetails') }}</h2>
     </div>
 
     <div class="panel-content" v-if="book">
@@ -29,7 +32,7 @@ const emit = defineEmits(['close']);
         <div class="rating-row">
           <span class="star">⭐</span>
           <span class="rating-val">{{ book.rating }}</span>
-          <span class="reviews-count">({{ book.reviewsCount }} sharh)</span>
+          <span class="reviews-count">({{ book.reviewsCount }} {{ t('reviews') }})</span>
         </div>
 
         <div class="price-box">
@@ -38,21 +41,21 @@ const emit = defineEmits(['close']);
         </div>
 
         <div class="section-block">
-          <h3 class="block-title">Kitob haqida</h3>
+          <h3 class="block-title">{{ t('aboutBook') }}</h3>
           <p class="description-text">{{ book.description }}</p>
         </div>
 
         <div class="details-grid">
           <div class="detail-item">
-            <span class="label">Til</span>
+            <span class="label">{{ t('language') }}</span>
             <span class="val">{{ book.details.language }}</span>
           </div>
           <div class="detail-item">
-            <span class="label">Sahifalar</span>
+            <span class="label">{{ t('pages') }}</span>
             <span class="val">{{ book.details.pages }}</span>
           </div>
           <div class="detail-item">
-            <span class="label">Holati</span>
+            <span class="label">{{ t('condition') }}</span>
             <span class="val">{{ book.details.condition }}</span>
           </div>
         </div>
@@ -61,18 +64,19 @@ const emit = defineEmits(['close']);
           <div class="avatar">{{ book.owner.initials }}</div>
           <div class="owner-info">
             <div class="name">{{ book.owner.name }}</div>
-            <div class="stats">⭐ {{ book.owner.rating }} • {{ book.owner.booksCount }} ta kitob</div>
+            <div class="stats">⭐ {{ book.owner.rating }} • {{ book.owner.booksCount }} {{ t('booksCountText') }}</div>
           </div>
         </div>
       </div>
       
       <div class="panel-actions">
-        <button class="btn-primary">Ijaraga olish</button>
-        <button class="btn-outline">Yozish</button>
+        <button class="btn-primary">{{ t('rentNow') }}</button>
+        <button class="btn-outline">{{ t('writeMessage') }}</button>
       </div>
     </div>
   </div>
 </template>
+
 
 <style scoped>
 .side-panel {
