@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, defineProps, defineEmits } from 'vue';
 import BookCommentsPanel from './BookCommentsPanel.vue';
-import { db } from '../firebase';
-import { ref as dbRef, onValue, runTransaction } from 'firebase/database';
 import { useI18n } from '../composables/useI18n';
 
 const { t } = useI18n();
@@ -41,60 +39,46 @@ onMounted(() => {
 });
 
 const loadBookLikes = () => {
-  const isFirebaseConfigured = !db.app.options.apiKey?.includes('SINING_API_KEY');
   const userLikes = JSON.parse(localStorage.getItem('user_book_likes') || '{}');
   isLiked.value = !!userLikes[`${userName.value}_${props.book.id}`];
 
-  if (isFirebaseConfigured) {
-    const likesRef = dbRef(db, `bookLikes/${props.book.id}`);
-    onValue(likesRef, (snapshot) => {
-      bookLikes.value = snapshot.val() || 0;
-    });
-  } else {
-    // Lokal rejimda kitobga qo'shilgan likelarni hisoblash
-    const allLikes = JSON.parse(localStorage.getItem('all_book_likes') || '{}');
-    bookLikes.value = allLikes[props.book.id] || 0;
-  }
+  // Lokal rejimda kitobga qo'shilgan likelarni hisoblash
+  const allLikes = JSON.parse(localStorage.getItem('all_book_likes') || '{}');
+  bookLikes.value = allLikes[props.book.id] || 0;
 };
 
 const toggleBookLike = () => {
-  const isFirebaseConfigured = !db.app.options.apiKey?.includes('SINING_API_KEY');
   const userLikes = JSON.parse(localStorage.getItem('user_book_likes') || '{}');
   const userKey = `${userName.value}_${props.book.id}`;
-
-  if (isFirebaseConfigured) {
-    const likesRef = dbRef(db, `bookLikes/${props.book.id}`);
-    runTransaction(likesRef, (currentLikes) => {
-      let likes = currentLikes || 0;
-      if (isLiked.value) {
-        likes = Math.max(0, likes - 1);
-        delete userLikes[userKey];
-        isLiked.value = false;
-      } else {
-        likes++;
-        userLikes[userKey] = true;
-        isLiked.value = true;
-      }
-      return likes;
-    }).then(() => {
-      localStorage.setItem('user_book_likes', JSON.stringify(userLikes));
-    });
+  const allLikes = JSON.parse(localStorage.getItem('all_book_likes') || '{}');
+  
+  if (isLiked.value) {
+    allLikes[props.book.id] = Math.max(0, (allLikes[props.book.id] || 0) - 1);
+    delete userLikes[userKey];
+    isLiked.value = false;
   } else {
-    // Lokal fallback
-    const allLikes = JSON.parse(localStorage.getItem('all_book_likes') || '{}');
-    if (isLiked.value) {
-      allLikes[props.book.id] = Math.max(0, (allLikes[props.book.id] || 0) - 1);
-      delete userLikes[userKey];
-      isLiked.value = false;
-    } else {
-      allLikes[props.book.id] = (allLikes[props.book.id] || 0) + 1;
-      userLikes[userKey] = true;
-      isLiked.value = true;
+    allLikes[props.book.id] = (allLikes[props.book.id] || 0) + 1;
+    userLikes[userKey] = Date.now();
+    isLiked.value = true;
+
+    // Limit to 30 likes per user
+    const userLikeKeys = Object.keys(userLikes).filter(k => k.startsWith(userName.value + '_'));
+    if (userLikeKeys.length > 30) {
+      // Sort by timestamp ascending (oldest first)
+      userLikeKeys.sort((a, b) => (userLikes[a] || 0) - (userLikes[b] || 0));
+      const oldestKey = userLikeKeys[0];
+      const oldestBookId = oldestKey.split('_')[1];
+      
+      delete userLikes[oldestKey];
+      if (allLikes[oldestBookId]) {
+        allLikes[oldestBookId] = Math.max(0, allLikes[oldestBookId] - 1);
+      }
     }
-    localStorage.setItem('all_book_likes', JSON.stringify(allLikes));
-    localStorage.setItem('user_book_likes', JSON.stringify(userLikes));
-    bookLikes.value = allLikes[props.book.id];
   }
+  
+  localStorage.setItem('all_book_likes', JSON.stringify(allLikes));
+  localStorage.setItem('user_book_likes', JSON.stringify(userLikes));
+  bookLikes.value = allLikes[props.book.id];
 };
 </script>
 
