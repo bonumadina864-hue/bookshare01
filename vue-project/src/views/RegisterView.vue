@@ -6,8 +6,24 @@ const router = useRouter()
 const name = ref('')
 const email = ref('')
 const password = ref('')
+const confirmPassword = ref('')
+const errorMessage = ref('')
 
 const handleRegister = () => {
+  if (!email.value.endsWith('@gmail.com')) {
+    errorMessage.value = "Email faqat @gmail.com bilan tugashi kerak"
+    return
+  }
+  if (password.value.length < 8) {
+    errorMessage.value = "Parol kamida 8 ta belgidan iborat bo'lishi kerak"
+    return
+  }
+  if (password.value !== confirmPassword.value) {
+    errorMessage.value = "Parollar mos kelmadi"
+    return
+  }
+  errorMessage.value = ""
+
   localStorage.setItem('isLoggedIn', 'true')
   router.push('/')
   setTimeout(() => window.location.reload(), 100) // Force refresh to update HomeView
@@ -36,6 +52,13 @@ const handleRegister = () => {
           <label>Parol</label>
           <input type="password" v-model="password" placeholder="Parol yarating" required />
         </div>
+
+        <div class="form-group">
+          <label>Parolni tasdiqlang</label>
+          <input type="password" v-model="confirmPassword" placeholder="Parolni qayta kiriting" required />
+        </div>
+
+        <p v-if="errorMessage" class="error-text">{{ errorMessage }}</p>
 
         <button type="submit" class="submit-btn">Ro'yxatdan o'tish</button>
       </form>
@@ -99,6 +122,14 @@ const handleRegister = () => {
   background: var(--bg);
   color: var(--text);
   outline: none;
+}
+
+.error-text {
+  color: #ff4d4f;
+  margin-bottom: 16px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 14px;
 }
 
 .submit-btn {
