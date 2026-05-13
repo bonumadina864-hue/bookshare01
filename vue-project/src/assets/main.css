@@ -1,35 +1,64 @@
-@import './base.css';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
+
+:root {
+  --primary: #2d31a6;
+  --primary-light: #3d41c6;
+  --header-bg: #1a237e;
+  --white: #ffffff;
+  --surface: #ffffff;
+  --bg: #f5f7fb;
+  --border: #e2e8f0;
+  --text-dark: #2c3e50;
+  --text-heading: #1e293b;
+  --text: #334155;
+  --text-muted: #64748b;
+  --accent: #e8820c;
+  --accent-orange: #f39c12;
+  --accent-red: #e74c3c;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+body.dark {
+  --surface: #1e293b;
+  --bg: #0f172a;
+  --border: #334155;
+  --text: #cbd5e1;
+  --text-heading: #f1f5f9;
+  --text-muted: #94a3b8;
+  --header-bg: #0f172a;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  transition: background-color 0.3s, color 0.3s;
+}
 
 #app {
-  max-width: 1280px;
+  width: 100%;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+}
+
+.container {
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+  padding: 0 2rem;
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
-
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
 }
