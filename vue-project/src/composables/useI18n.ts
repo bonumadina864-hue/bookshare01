@@ -70,7 +70,14 @@ const translations: Record<string, any> = {
     home: 'Bosh sahifa',
     search: 'Qidiruv',
     favorites: 'Sevimlilar',
-    profile: 'Profil'
+    profile: 'Profil',
+    myBooks: 'Mening kitoblarim',
+    savedBooks: 'Saqlanganlar',
+    rentedBooks: 'Ijaraga olinganlar',
+    likes: 'Yoqtirishlar',
+    deleteBook: 'O\'chirish',
+    noBooks: 'Hali kitob joylamagansiz',
+    confirmDelete: 'Haqiqatan ham o\'chirmoqchimisiz?'
   },
   RU: {
     about: 'О нас',
@@ -141,7 +148,14 @@ const translations: Record<string, any> = {
     home: 'Главная',
     search: 'Поиск',
     favorites: 'Избранное',
-    profile: 'Профиль'
+    profile: 'Профиль',
+    myBooks: 'Мои книги',
+    savedBooks: 'Сохраненные',
+    rentedBooks: 'Арендованные',
+    likes: 'Лайки',
+    deleteBook: 'Удалить',
+    noBooks: 'Вы еще не добавили книг',
+    confirmDelete: 'Вы уверены, что хотите удалить?'
   },
   EN: {
     about: 'About Us',
@@ -212,7 +226,14 @@ const translations: Record<string, any> = {
     home: 'Home',
     search: 'Search',
     favorites: 'Favorites',
-    profile: 'Profile'
+    profile: 'Profile',
+    myBooks: 'My Books',
+    savedBooks: 'Saved',
+    rentedBooks: 'Rented',
+    likes: 'Likes',
+    deleteBook: 'Delete',
+    noBooks: 'No books added yet',
+    confirmDelete: 'Are you sure you want to delete?'
   }
 }
 
