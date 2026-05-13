@@ -27,13 +27,18 @@ const logout = () => {
 <template>
   <header class="header">
     <div class="container header-container">
-      <router-link to="/" class="logo">
+      <div class="header-left" v-if="!isLoggedIn">
+        <nav class="nav nav-row" aria-label="Main">
+          <router-link to="/" class="logo">Book<span>share</span></router-link>
+          <router-link to="/" class="nav-link" active-class="nav-link-active">{{ t('home') }}</router-link>
+          <router-link to="/about" class="nav-link" active-class="nav-link-active">{{ t('about') }}</router-link>
+          <router-link to="/how-it-works" class="nav-link" active-class="nav-link-active">{{ t('howItWorks') }}</router-link>
+        </nav>
+      </div>
+
+      <router-link v-else to="/" class="logo">
         Book<span>share</span>
       </router-link>
-      
-      <nav class="nav" v-if="!isLoggedIn">
-        <router-link to="/about" class="nav-link">{{ t('about') }}</router-link>
-      </nav>
       
       <div class="logged-in-nav-wrapper" v-if="isLoggedIn">
         <div class="logged-in-nav">
@@ -119,6 +124,26 @@ const logout = () => {
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  gap: 24px;
+}
+
+.header-left {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+}
+
+.nav-row {
+  flex: 1;
+  flex-wrap: wrap;
+  column-gap: 2rem;
+  row-gap: 0.75rem;
 }
 
 .logo {
@@ -127,15 +152,11 @@ const logout = () => {
   color: var(--primary);
   text-decoration: none;
   letter-spacing: -1px;
+  flex-shrink: 0;
 }
 
 .logo span {
   color: var(--text-heading);
-}
-
-.nav {
-  display: flex;
-  gap: 32px;
 }
 
 .nav-link {
@@ -146,6 +167,10 @@ const logout = () => {
 }
 
 .nav-link:hover {
+  color: var(--primary);
+}
+
+.nav-link-active {
   color: var(--primary);
 }
 

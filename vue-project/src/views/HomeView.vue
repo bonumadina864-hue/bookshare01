@@ -45,7 +45,9 @@ onMounted(() => {
 <template>
   <div v-if="!isLoggedIn" class="home-layout" :class="{ 'panel-open': selectedBookId }">
     <div class="main-content">
-      <HeroSlider />
+      <div class="home-hero-wrapper">
+        <HeroSlider />
+      </div>
       <BookGrid @select="id => selectedBookId = id" />
     </div>
     <div class="side-panel-wrapper" v-if="selectedBookId">
@@ -68,6 +70,20 @@ onMounted(() => {
   flex: 1;
   transition: all 0.3s ease;
   overflow-x: hidden;
+  padding: 24px;
+}
+
+.home-hero-wrapper {
+  margin: 20px;
+  margin-bottom: 60px;
+  border-radius: 40px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.home-hero-wrapper :deep(.hero-slider) {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  padding: 48px 0 60px;
 }
 
 .side-panel-wrapper {
