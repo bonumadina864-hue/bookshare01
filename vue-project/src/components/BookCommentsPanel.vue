@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, defineProps, defineEmits } from 'vue';
 import { useI18n } from '../composables/useI18n';
-import { db } from '../firebase';
-import { ref as dbRef, onValue, push, set, update, runTransaction } from 'firebase/database';
 
 const props = defineProps<{
   bookId: number;
@@ -21,29 +19,8 @@ onMounted(() => {
   isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
   userName.value = localStorage.getItem('userName') || 'Anonym';
   
-  // Firebase sozlamalari tekshiruvi
-  const isFirebaseConfigured = !db.app.options.apiKey?.includes('SINING_API_KEY');
-
-  if (isFirebaseConfigured) {
-    // Firebase orqali real-time o'qish
-    const commentsRef = dbRef(db, `comments/${props.bookId}`);
-    onValue(commentsRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        comments.value = Object.keys(data).map(key => ({
-          id: key,
-          ...data[key]
-        }));
-      } else {
-        comments.value = [];
-      }
-    });
-  } else {
-    // Agar Firebase sozlanmagan bo'lsa, vaqtincha localStorage dan foydalanamiz
-    console.warn("Firebase config topilmadi. Vaqtinchalik localStorage ishlatilmoqda.");
-    const allComments = JSON.parse(localStorage.getItem('book_comments') || '{}');
-    comments.value = allComments[props.bookId] || [];
-  }
+  const allComments = JSON.parse(localStorage.getItem('book_comments') || '{}');
+  comments.value = allComments[props.bookId] || [];
 
   userReactions.value = JSON.parse(localStorage.getItem('user_comment_reactions') || '{}');
 });
@@ -51,34 +28,19 @@ onMounted(() => {
 const submitComment = () => {
   if (!newComment.value.trim()) return;
 
-  const isFirebaseConfigured = !db.app.options.apiKey?.includes('SINING_API_KEY');
-
-  if (isFirebaseConfigured) {
-    const commentsRef = dbRef(db, `comments/${props.bookId}`);
-    const newCommentRef = push(commentsRef);
-    set(newCommentRef, {
-      user: userName.value,
-      text: newComment.value,
-      date: new Date().toLocaleString(),
-      likes: 0,
-      dislikes: 0
-    });
-  } else {
-    // Fallback logic
-    const allComments = JSON.parse(localStorage.getItem('book_comments') || '{}');
-    if (!allComments[props.bookId]) allComments[props.bookId] = [];
-    const commentObj = {
-      id: Date.now().toString(),
-      user: userName.value,
-      text: newComment.value,
-      date: new Date().toLocaleString(),
-      likes: 0,
-      dislikes: 0
-    };
-    allComments[props.bookId].push(commentObj);
-    localStorage.setItem('book_comments', JSON.stringify(allComments));
-    comments.value.push(commentObj);
-  }
+  const allComments = JSON.parse(localStorage.getItem('book_comments') || '{}');
+  if (!allComments[props.bookId]) allComments[props.bookId] = [];
+  const commentObj = {
+    id: Date.now().toString(),
+    user: userName.value,
+    text: newComment.value,
+    date: new Date().toLocaleString(),
+    likes: 0,
+    dislikes: 0
+  };
+  allComments[props.bookId].push(commentObj);
+  localStorage.setItem('book_comments', JSON.stringify(allComments));
+  comments.value.push(commentObj);
 
   newComment.value = '';
 };
@@ -96,60 +58,31 @@ const handleReaction = (commentId: string, type: 'like' | 'dislike') => {
 
   const userKey = `${userName.value}_${commentId}`;
   const currentReaction = userReactions.value[userKey];
-  const isFirebaseConfigured = !db.app.options.apiKey?.includes('SINING_API_KEY');
 
-  if (isFirebaseConfigured) {
-    const commentRef = dbRef(db, `comments/${props.bookId}/${commentId}`);
-    runTransaction(commentRef, (comment) => {
-      if (comment) {
-        if (typeof comment.likes !== 'number') comment.likes = 0;
-        if (typeof comment.dislikes !== 'number') comment.dislikes = 0;
+  const allComments = JSON.parse(localStorage.getItem('book_comments') || '{}');
+  const bookComments = allComments[props.bookId] || [];
+  const comment = bookComments.find((c: any) => c.id === commentId);
 
-        if (currentReaction === type) {
-          if (type === 'like') comment.likes = Math.max(0, comment.likes - 1);
-          else comment.dislikes = Math.max(0, comment.dislikes - 1);
-          delete userReactions.value[userKey];
-        } else {
-          if (currentReaction) {
-            if (currentReaction === 'like') comment.likes = Math.max(0, comment.likes - 1);
-            else comment.dislikes = Math.max(0, comment.dislikes - 1);
-          }
-          if (type === 'like') comment.likes++;
-          else comment.dislikes++;
-          userReactions.value[userKey] = type;
-        }
-      }
-      return comment;
-    }).then(() => {
-      localStorage.setItem('user_comment_reactions', JSON.stringify(userReactions.value));
-    });
-  } else {
-    // Lokal rejimda ishlash
-    const allComments = JSON.parse(localStorage.getItem('book_comments') || '{}');
-    const bookComments = allComments[props.bookId] || [];
-    const comment = bookComments.find((c: any) => c.id === commentId);
+  if (comment) {
+    if (typeof comment.likes !== 'number') comment.likes = 0;
+    if (typeof comment.dislikes !== 'number') comment.dislikes = 0;
 
-    if (comment) {
-      if (typeof comment.likes !== 'number') comment.likes = 0;
-      if (typeof comment.dislikes !== 'number') comment.dislikes = 0;
-
-      if (currentReaction === type) {
-        if (type === 'like') comment.likes--;
+    if (currentReaction === type) {
+      if (type === 'like') comment.likes--;
+      else comment.dislikes--;
+      delete userReactions.value[userKey];
+    } else {
+      if (currentReaction) {
+        if (currentReaction === 'like') comment.likes--;
         else comment.dislikes--;
-        delete userReactions.value[userKey];
-      } else {
-        if (currentReaction) {
-          if (currentReaction === 'like') comment.likes--;
-          else comment.dislikes--;
-        }
-        if (type === 'like') comment.likes++;
-        else comment.dislikes++;
-        userReactions.value[userKey] = type;
       }
-      localStorage.setItem('book_comments', JSON.stringify(allComments));
-      localStorage.setItem('user_comment_reactions', JSON.stringify(userReactions.value));
-      comments.value = bookComments;
+      if (type === 'like') comment.likes++;
+      else comment.dislikes++;
+      userReactions.value[userKey] = type;
     }
+    localStorage.setItem('book_comments', JSON.stringify(allComments));
+    localStorage.setItem('user_comment_reactions', JSON.stringify(userReactions.value));
+    comments.value = bookComments;
   }
 };
 
