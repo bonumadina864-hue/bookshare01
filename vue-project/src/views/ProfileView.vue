@@ -1,44 +1,22 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import { useI18n } from '../composables/useI18n';
+import AddBookModal from '../components/AddBookModal.vue';
+import { db } from '../firebase';
+import { ref as dbRef, push, set, onValue } from 'firebase/database';
 
 const { t } = useI18n();
+const showAddBookModal = ref(false);
+const showDeleteConfirm = ref(false);
+const bookIdToDelete = ref<number | null>(null);
 
 const userName = ref(localStorage.getItem('userName') || 'Jasur');
 const isEditingName = ref(false);
 const newName = ref(userName.value);
 const profilePic = ref(localStorage.getItem('profilePic') || '');
 
-// Mock user's books
-const userBooks = ref([
-  {
-    id: 101,
-    title: 'Atomic Habits',
-    author: 'James Clear',
-    img: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=400',
-    price: '25,000',
-    pricePeriod: 'kun',
-    likes: 42
-  },
-  {
-    id: 102,
-    title: 'Rich Dad Poor Dad',
-    author: 'Robert Kiyosaki',
-    img: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=400',
-    price: '15,000',
-    pricePeriod: 'kun',
-    likes: 28
-  },
-  {
-    id: 103,
-    title: 'Thinking, Fast and Slow',
-    author: 'Daniel Kahneman',
-    img: 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?auto=format&fit=crop&q=80&w=400',
-    price: '30,000',
-    pricePeriod: 'kun',
-    likes: 15
-  }
-]);
+// Mock user's books - Empty for fresh start
+const userBooks = ref([]);
 
 // Other stats
 const savedCount = ref(12);
@@ -49,13 +27,18 @@ const totalLikes = computed(() => {
 });
 
 onMounted(() => {
+  // Eski test ma'lumotlarini tozalash (Faqat bir marta)
+  if (!localStorage.getItem('fresh_start_v2')) {
+    localStorage.removeItem('myUploadedBooks');
+    localStorage.removeItem('global_books');
+    localStorage.setItem('fresh_start_v2', 'true');
+  }
+
   console.log('ProfileView mounted');
   try {
     const storedBooks = localStorage.getItem('myUploadedBooks');
     if (storedBooks) {
       userBooks.value = JSON.parse(storedBooks);
-    } else {
-      localStorage.setItem('myUploadedBooks', JSON.stringify(userBooks.value));
     }
   } catch (err) {
     console.error('Failed to load books from localStorage:', err);
@@ -76,10 +59,82 @@ const cancelEdit = () => {
 };
 
 const deleteBook = (id: number) => {
-  if (confirm(t('confirmDelete'))) {
-    userBooks.value = userBooks.value.filter(b => b.id !== id);
+  bookIdToDelete.value = id;
+  showDeleteConfirm.value = true;
+};
+
+const confirmDelete = () => {
+  if (bookIdToDelete.value !== null) {
+    const bookToRemove = userBooks.value.find(b => b.id === bookIdToDelete.value);
+    
+    // 1. Profil (local view) dan o'chirish
+    userBooks.value = userBooks.value.filter(b => b.id !== bookIdToDelete.value);
     localStorage.setItem('myUploadedBooks', JSON.stringify(userBooks.value));
+
+    // 2. Global bazadan o'chirish (Firebase yoki localStorage fallback)
+    const isFirebaseConfigured = !db.app.options.apiKey?.includes('SINING_API_KEY');
+    if (isFirebaseConfigured) {
+      // Firebase dan o'chirish (id bo'yicha)
+      const globalBooksRef = dbRef(db, 'globalBooks');
+      onValue(globalBooksRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          Object.keys(data).forEach(key => {
+            // Agar id yoki sarlavha mos kelsa o'chirish
+            if (data[key].id === bookIdToDelete.value || data[key].title === bookToRemove?.title) {
+              set(dbRef(db, `globalBooks/${key}`), null);
+            }
+          });
+        }
+      }, { onlyOnce: true });
+    } else {
+      // LocalStorage global_books dan o'chirish
+      let globalBooks = JSON.parse(localStorage.getItem('global_books') || '[]');
+      globalBooks = globalBooks.filter((b: any) => b.id !== bookIdToDelete.value && b.title !== bookToRemove?.title);
+      localStorage.setItem('global_books', JSON.stringify(globalBooks));
+    }
+
+    showDeleteConfirm.value = false;
+    bookIdToDelete.value = null;
   }
+};
+
+const handleSaveBook = (bookData: any) => {
+  const newBook = {
+    id: Date.now(),
+    title: bookData.title,
+    author: bookData.author,
+    img: bookData.images[0] || 'https://via.placeholder.com/400x600?text=No+Image',
+    rating: 0,
+    reviewsCount: 0,
+    price: bookData.price,
+    pricePeriod: bookData.pricePeriod,
+    minPeriod: '1 ' + bookData.pricePeriod,
+    owner: { name: userName.value, initials: userName.value.charAt(0).toUpperCase(), rating: 5.0, booksCount: userBooks.value.length + 1 },
+    description: bookData.description,
+    details: { language: "O'zbek", pages: 0, year: new Date().getFullYear(), condition: bookData.condition },
+    location: { district: bookData.location, distance: "Yaqin" },
+    coords: bookData.coords,
+    likes: 0
+  };
+
+  // Add to local user profile
+  userBooks.value.push(newBook);
+  localStorage.setItem('myUploadedBooks', JSON.stringify(userBooks.value));
+
+  // Push to global store (Firebase or localStorage fallback)
+  const isFirebaseConfigured = !db.app.options.apiKey?.includes('SINING_API_KEY');
+  if (isFirebaseConfigured) {
+    const globalBooksRef = dbRef(db, 'globalBooks');
+    const newBookRef = push(globalBooksRef);
+    set(newBookRef, newBook);
+  } else {
+    const globalBooks = JSON.parse(localStorage.getItem('global_books') || '[]');
+    globalBooks.push(newBook);
+    localStorage.setItem('global_books', JSON.stringify(globalBooks));
+  }
+
+  showAddBookModal.value = false;
 };
 
 const triggerFileInput = () => {
@@ -161,7 +216,7 @@ const onFileChange = (e: Event) => {
           <h2 class="section-title">{{ t('myBooks') }}</h2>
         </div>
 
-        <div class="books-grid" v-if="userBooks.length > 0">
+        <div class="books-grid">
           <div v-for="book in userBooks" :key="book.id" class="book-card">
             <div class="book-img-wrapper">
               <img :src="book.img" :alt="book.title" class="book-img" />
@@ -178,14 +233,31 @@ const onFileChange = (e: Event) => {
               </div>
             </div>
           </div>
-        </div>
-        <div class="empty-state" v-else>
-          <div class="empty-icon">📚</div>
-          <p>{{ t('noBooks') }}</p>
+          <div class="book-card add-book-card" @click="showAddBookModal = true">
+            <div class="add-icon">+</div>
+            <div class="add-text">Yangi kitob qo'shish</div>
+          </div>
         </div>
       </section>
     </div>
   </div>
+  
+  <AddBookModal v-if="showAddBookModal" @close="showAddBookModal = false" @save="handleSaveBook" />
+
+  <!-- Custom Delete Confirmation Modal -->
+  <Transition name="scale">
+    <div v-if="showDeleteConfirm" class="confirm-overlay" @click.self="showDeleteConfirm = false">
+      <div class="confirm-modal">
+        <div class="confirm-icon">🗑️</div>
+        <h3 class="confirm-title">Kitobni o'chirish</h3>
+        <p class="confirm-text">Haqiqatan ham ushbu kitobni o'chirib tashlamoqchimisiz? Bu amalni ortga qaytarib bo'lmaydi.</p>
+        <div class="confirm-actions">
+          <button class="btn-cancel" @click="showDeleteConfirm = false">Bekor qilish</button>
+          <button class="btn-delete" @click="confirmDelete">O'chirib tashlash</button>
+        </div>
+      </div>
+    </div>
+  </Transition>
 </template>
 
 <style scoped>
@@ -510,5 +582,120 @@ const onFileChange = (e: Event) => {
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+.add-book-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--primary);
+  background: transparent;
+  cursor: pointer;
+  min-height: 300px;
+  color: var(--primary);
+}
+
+.add-book-card:hover {
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.add-icon {
+  font-size: 64px;
+  font-weight: 300;
+  margin-bottom: 16px;
+}
+
+.add-text {
+  font-size: 16px;
+  font-weight: 700;
+}
+/* Custom Confirm Modal Styles */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.confirm-modal {
+  background: var(--surface);
+  padding: 32px;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  border: 1px solid var(--border);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+}
+
+.confirm-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.confirm-title {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--text-heading);
+  margin-bottom: 12px;
+}
+
+.confirm-text {
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-cancel, .btn-delete {
+  flex: 1;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel {
+  background: var(--bg);
+  color: var(--text-heading);
+  border: 1px solid var(--border);
+}
+
+.btn-cancel:hover {
+  background: var(--surface-light);
+}
+
+.btn-delete {
+  background: #ef4444;
+  color: white;
+  border: none;
+}
+
+.btn-delete:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(239, 68, 68, 0.3);
+}
+
+/* Animations */
+.scale-enter-active, .scale-leave-active {
+  transition: all 0.3s ease;
+}
+.scale-enter-from, .scale-leave-to {
+  opacity: 0;
+  transform: scale(0.9);
 }
 </style>

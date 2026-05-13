@@ -17,7 +17,34 @@ const categories = computed(() => [
 
 const activeCategoryIndex = ref(0);
 
-import { booksData as books } from '../data/books';
+import { booksData as initialBooks } from '../data/books';
+import { db } from '../firebase';
+import { ref as dbRef, onValue } from 'firebase/database';
+import { onMounted } from 'vue';
+
+const books = ref([...initialBooks]);
+
+onMounted(() => {
+  const isFirebaseConfigured = !db.app.options.apiKey?.includes('SINING_API_KEY');
+  if (isFirebaseConfigured) {
+    const globalBooksRef = dbRef(db, 'globalBooks');
+    onValue(globalBooksRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const remoteBooks = Object.keys(data).map(key => ({
+          ...data[key],
+          id: key
+        }));
+        books.value = [...initialBooks, ...remoteBooks];
+      }
+    });
+  } else {
+    const globalBooks = JSON.parse(localStorage.getItem('global_books') || '[]');
+    if (globalBooks.length > 0) {
+      books.value = [...initialBooks, ...globalBooks];
+    }
+  }
+});
 
 const userName = ref(localStorage.getItem('userName') || 'Jasur');
 const isEditingName = ref(false);
@@ -51,13 +78,13 @@ const saveName = () => {
   isEditingName.value = false;
 };
 
-const selectedBookId = ref<number | null>(null);
+const selectedBookId = ref<number | string | null>(null);
 const selectedBook = computed(() => {
   if (selectedBookId.value === null) return null;
-  return books.find(b => b.id === selectedBookId.value);
+  return books.value.find(b => b.id === selectedBookId.value);
 });
 
-const selectBook = (id: number) => {
+const selectBook = (id: number | string) => {
   selectedBookId.value = id;
 };
 
@@ -73,28 +100,15 @@ const closePanel = () => {
         <header class="main-header">
           <div class="container header-content profile-centered">
             <div class="profile-widget">
-              <div class="avatar-wrapper" @click="triggerFileInput">
+              <div class="avatar-wrapper">
                 <img :src="profilePic" alt="Profile" class="avatar-img" v-if="profilePic" />
                 <div class="avatar-placeholder" v-else>{{ userName.charAt(0).toUpperCase() }}</div>
-                <div class="avatar-overlay">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-                </div>
               </div>
-              <input type="file" ref="fileInput" @change="onFileChange" accept="image/*" style="display: none" />
               
               <div class="name-wrapper">
-                <h1 class="user-name" v-if="!isEditingName">
+                <h1 class="user-name">
                   {{ userName }}
-                  <button class="edit-btn" @click="isEditingName = true" :title="t('edit')">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                  </button>
                 </h1>
-                <div class="edit-name-form" v-else>
-                  <input type="text" v-model="tempName" @keyup.enter="saveName" class="name-input" />
-                  <button @click="saveName" class="save-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                  </button>
-                </div>
               </div>
             </div>
             <div class="header-actions">

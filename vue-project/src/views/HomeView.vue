@@ -4,18 +4,41 @@ import HeroSlider from '../components/HeroSlider.vue'
 import BookGrid from '../components/BookGrid.vue'
 import BookLandingPage from '../components/BookLandingPage.vue'
 import BookDetailSidePanel from '../components/BookDetailSidePanel.vue'
-import { booksData } from '../data/books'
+import { booksData as initialBooks } from '../data/books'
+import { db } from '../firebase'
+import { ref as dbRef, onValue } from 'firebase/database'
 
 const isLoggedIn = ref(false)
-const selectedBookId = ref<number | null>(null)
+const selectedBookId = ref<number | string | null>(null)
+const books = ref([...initialBooks])
 
 const selectedBook = computed(() => {
   if (selectedBookId.value === null) return null
-  return booksData.find(b => b.id === selectedBookId.value)
+  return books.value.find(b => b.id === selectedBookId.value)
 })
 
 onMounted(() => {
   isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true'
+
+  const isFirebaseConfigured = !db.app.options.apiKey?.includes('SINING_API_KEY');
+  if (isFirebaseConfigured) {
+    const globalBooksRef = dbRef(db, 'globalBooks');
+    onValue(globalBooksRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const remoteBooks = Object.keys(data).map(key => ({
+          ...data[key],
+          id: key
+        }));
+        books.value = [...initialBooks, ...remoteBooks];
+      }
+    });
+  } else {
+    const globalBooks = JSON.parse(localStorage.getItem('global_books') || '[]');
+    if (globalBooks.length > 0) {
+      books.value = [...initialBooks, ...globalBooks];
+    }
+  }
 })
 </script>
 

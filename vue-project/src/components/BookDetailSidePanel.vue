@@ -20,6 +20,24 @@ const userName = ref(localStorage.getItem('userName') || 'Anonym');
 onMounted(() => {
   userName.value = localStorage.getItem('userName') || 'Anonym';
   loadBookLikes();
+  
+  if (props.book.coords) {
+    setTimeout(() => {
+      // @ts-ignore
+      if (typeof L !== 'undefined') {
+        // @ts-ignore
+        const miniMap = L.map('mini-map', {
+          zoomControl: false,
+          attributionControl: false
+        }).setView([props.book.coords.lat, props.book.coords.lng], 14);
+        
+        // @ts-ignore
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(miniMap);
+        // @ts-ignore
+        L.marker([props.book.coords.lat, props.book.coords.lng]).addTo(miniMap);
+      }
+    }, 400);
+  }
 });
 
 const loadBookLikes = () => {
@@ -141,6 +159,12 @@ const toggleBookLike = () => {
             <div class="name">{{ book.owner.name }}</div>
             <div class="stats">⭐ {{ book.owner.rating }} • {{ book.owner.booksCount }} {{ t('booksCountText') }}</div>
           </div>
+        </div>
+
+        <div class="section-block" v-if="book.location">
+          <h3 class="block-title">📍 Joylashuv</h3>
+          <p class="description-text">{{ book.location.district || book.location }}</p>
+          <div id="mini-map" class="mini-map" v-if="book.coords"></div>
         </div>
       </div>
       
@@ -369,6 +393,15 @@ const toggleBookLike = () => {
 .owner-info .stats {
   font-size: 12px;
   color: var(--text-muted);
+}
+
+.mini-map {
+  width: 100%;
+  height: 180px;
+  border-radius: 16px;
+  margin-top: 12px;
+  border: 1px solid var(--border);
+  z-index: 1;
 }
 
 .panel-actions {
