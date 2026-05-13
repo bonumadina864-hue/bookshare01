@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from '../composables/useI18n'
 
-const currentLang = ref('UZ')
+const { lang, setLang: updateLang } = useI18n()
 const showLangs = ref(false)
 
-const setLang = (lang: string) => {
-  currentLang.value = lang
+const handleSetLang = (newLang: string) => {
+  updateLang(newLang)
   showLangs.value = false
 }
 </script>
@@ -13,12 +14,12 @@ const setLang = (lang: string) => {
 <template>
   <div class="lang-switcher">
     <button class="lang-btn" @click="showLangs = !showLangs">
-      {{ currentLang }} <span class="chevron">▾</span>
+      {{ lang }} <span class="chevron">▾</span>
     </button>
     <div v-if="showLangs" class="lang-dropdown">
-      <div class="lang-item" @click="setLang('UZ')">UZ</div>
-      <div class="lang-item" @click="setLang('RU')">RU</div>
-      <div class="lang-item" @click="setLang('EN')">EN</div>
+      <div class="lang-item" @click="handleSetLang('UZ')">UZ</div>
+      <div class="lang-item" @click="handleSetLang('RU')">RU</div>
+      <div class="lang-item" @click="handleSetLang('EN')">EN</div>
     </div>
   </div>
 </template>

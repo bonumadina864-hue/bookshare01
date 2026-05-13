@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from '../composables/useI18n'
 
+const { t } = useI18n()
 const router = useRouter()
 const email = ref('')
 const password = ref('')
 
 const handleLogin = () => {
   localStorage.setItem('isLoggedIn', 'true')
-  router.push('/')
-  setTimeout(() => window.location.reload(), 100) // Force refresh to update HomeView
+  if (!localStorage.getItem('userName')) {
+    localStorage.setItem('userName', email.value.split('@')[0])
+  }
+  window.location.href = '/'
 }
 </script>
 
@@ -21,12 +25,12 @@ const handleLogin = () => {
         <div class="logo-icon">📖</div>
       </div>
 
-      <h1 class="title">Xush kelibsiz</h1>
-      <p class="subtitle">BookShare akkauntingizga kiring</p>
+      <h1 class="title">{{ t('welcome') }}</h1>
+      <p class="subtitle">BookShare {{ t('login').toLowerCase() }}</p>
 
       <form class="login-form" @submit.prevent="handleLogin">
         <div class="form-group">
-          <label>Email</label>
+          <label>{{ t('email') }}</label>
           <div class="input-wrapper">
             <span class="input-icon">✉️</span>
             <input type="email" v-model="email" placeholder="emailingiz@misol.com" required />
@@ -34,32 +38,32 @@ const handleLogin = () => {
         </div>
 
         <div class="form-group">
-          <label>Parol</label>
+          <label>{{ t('password') }}</label>
           <div class="input-wrapper">
             <span class="input-icon">🔒</span>
             <input type="password" v-model="password" placeholder="Parolingizni kiriting" required />
           </div>
-          <a href="#" class="forgot-link">Parolni unutdingizmi?</a>
+          <a href="#" class="forgot-link">{{ t('forgotPassword') }}</a>
         </div>
 
         <button type="submit" class="submit-btn">
-          Davom etish <span class="arrow">></span>
+          {{ t('login') }} <span class="arrow">></span>
         </button>
       </form>
 
       <div class="separator">
-        <span>yoki</span>
+        <span>{{ t('or') }}</span>
       </div>
 
       <div class="social-btns">
         <button class="social-btn">
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="18" />
-          Google orqali kirish
+          {{ t('socialLogin') }}
         </button>
       </div>
 
       <p class="footer-text">
-        Akkauntingiz yo'qmi? <router-link to="/register" class="link">Ro'yxatdan o'tish</router-link>
+        {{ t('noAccount') }} <router-link to="/register" class="link">{{ t('register') }}</router-link>
       </p>
     </div>
   </div>
@@ -166,7 +170,19 @@ const handleLogin = () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  justify-content: center;
   gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.submit-btn:hover {
+  background: var(--primary-light);
+  transform: translateY(-2px);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
 }
 
 .separator {

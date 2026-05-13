@@ -3,12 +3,17 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import ThemeToggle from './ThemeToggle.vue'
 import LanguageDropdown from './LanguageDropdown.vue'
+import { useI18n } from '../composables/useI18n'
+
+const { t } = useI18n()
 
 const router = useRouter()
 const isLoggedIn = ref(false)
+const userName = ref('Jasur')
 
 onMounted(() => {
   isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true'
+  userName.value = localStorage.getItem('userName') || 'Jasur'
 })
 
 const logout = () => {
@@ -27,22 +32,22 @@ const logout = () => {
       </router-link>
       
       <nav class="nav">
-        <router-link to="/about" class="nav-link">Biz haqimizda</router-link>
+        <router-link to="/about" class="nav-link">{{ t('about') }}</router-link>
       </nav>
 
       <div class="actions">
         <LanguageDropdown />
         <ThemeToggle />
         <template v-if="!isLoggedIn">
-          <router-link to="/login" class="login-btn">Kirish</router-link>
-          <router-link to="/register" class="register-btn">Ro'yxatdan o'tish</router-link>
+          <router-link to="/login" class="login-btn">{{ t('login') }}</router-link>
+          <router-link to="/register" class="register-btn">{{ t('register') }}</router-link>
         </template>
         <template v-else>
           <div class="user-profile">
             <span class="user-avatar">👤</span>
-            <span class="user-name">Jasur</span>
+            <span class="user-name">{{ userName }}</span>
           </div>
-          <button @click="logout" class="logout-btn">Chiqish</button>
+          <button @click="logout" class="logout-btn">{{ t('logout') }}</button>
         </template>
       </div>
     </div>

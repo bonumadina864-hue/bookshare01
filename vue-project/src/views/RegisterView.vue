@@ -10,8 +10,8 @@ const confirmPassword = ref('')
 const errorMessage = ref('')
 
 const handleRegister = () => {
-  if (!email.value.endsWith('@gmail.com')) {
-    errorMessage.value = "Email faqat @gmail.com bilan tugashi kerak"
+  if (!email.value.includes('@')) {
+    errorMessage.value = "To'g'ri email kiriting"
     return
   }
   if (password.value.length < 8) {
@@ -25,8 +25,8 @@ const handleRegister = () => {
   errorMessage.value = ""
 
   localStorage.setItem('isLoggedIn', 'true')
-  router.push('/')
-  setTimeout(() => window.location.reload(), 100) // Force refresh to update HomeView
+  localStorage.setItem('userName', name.value)
+  window.location.href = '/' // Redirect and refresh to ensure everything updates
 }
 </script>
 
@@ -142,6 +142,17 @@ const handleRegister = () => {
   font-size: 17px;
   font-weight: 800;
   margin-top: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.submit-btn:hover {
+  background: var(--primary-light);
+  transform: translateY(-2px);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
 }
 
 .footer-text {

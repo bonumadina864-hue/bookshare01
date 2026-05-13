@@ -1,15 +1,26 @@
 <script setup lang="ts">
-defineProps<{
+import { useRouter } from 'vue-router';
+
+const props = defineProps<{
+  id: number;
   title: string;
   rating: number;
   location: string;
   price: string;
   image: string;
 }>();
+
+const router = useRouter();
+
+const emit = defineEmits(['select']);
+
+const goToDetail = () => {
+  emit('select', props.id);
+};
 </script>
 
 <template>
-  <div class="book-card">
+  <div class="book-card" @click="goToDetail">
     <div class="image-container">
       <img :src="image" :alt="title" class="book-image" />
       <div class="rating-badge">

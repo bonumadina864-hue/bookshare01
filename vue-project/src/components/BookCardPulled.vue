@@ -1,5 +1,7 @@
 <script setup lang="ts">
-defineProps<{
+import { useRouter } from 'vue-router';
+
+const props = defineProps<{
   book: {
     id: number;
     title: string;
@@ -9,10 +11,18 @@ defineProps<{
     price: string;
   }
 }>()
+
+const router = useRouter();
+
+const emit = defineEmits(['select']);
+
+const goToDetail = () => {
+  emit('select', props.book.id);
+};
 </script>
 
 <template>
-  <div class="book-card">
+  <div class="book-card" @click="goToDetail">
     <div class="book-img-wrapper">
       <img :src="book.img" :alt="book.title" class="book-img" />
     </div>
