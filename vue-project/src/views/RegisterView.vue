@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from '../composables/useI18n'
 
+const { t } = useI18n()
 const router = useRouter()
 const name = ref('')
 const email = ref('')
@@ -34,37 +36,37 @@ const handleRegister = () => {
   <div class="register-page">
     <div class="container register-container">
       <div class="register-card">
-      <h1 class="title">Ro'yxatdan o'tish</h1>
-      <p class="subtitle">BookShare hamjamiyatiga qo'shiling</p>
+      <h1 class="title">{{ t('register') }}</h1>
+      <p class="subtitle">{{ t('footerText') }}</p>
 
       <form class="register-form" @submit.prevent="handleRegister">
         <div class="form-group">
-          <label>Ismingiz</label>
+          <label>{{ t('name') }}</label>
           <input type="text" v-model="name" placeholder="Ismingizni kiriting" required />
         </div>
 
         <div class="form-group">
-          <label>Email</label>
+          <label>{{ t('email') }}</label>
           <input type="email" v-model="email" placeholder="Emailingizni kiriting" required />
         </div>
 
         <div class="form-group">
-          <label>Parol</label>
+          <label>{{ t('password') }}</label>
           <input type="password" v-model="password" placeholder="Parol yarating" required />
         </div>
 
         <div class="form-group">
-          <label>Parolni tasdiqlang</label>
+          <label>{{ t('confirmPassword') }}</label>
           <input type="password" v-model="confirmPassword" placeholder="Parolni qayta kiriting" required />
         </div>
 
         <p v-if="errorMessage" class="error-text">{{ errorMessage }}</p>
 
-        <button type="submit" class="submit-btn">Ro'yxatdan o'tish</button>
+        <button type="submit" class="submit-btn">{{ t('register') }}</button>
       </form>
 
       <p class="footer-text">
-        Akkauntingiz bormi? <router-link to="/login" class="link">Kirish</router-link>
+        {{ t('haveAccount') }} <router-link to="/login" class="link">{{ t('login') }}</router-link>
       </p>
     </div>
   </div>

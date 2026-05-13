@@ -1,11 +1,80 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
+import { ref, onMounted, defineProps, defineEmits } from 'vue';
+import BookCommentsPanel from './BookCommentsPanel.vue';
+import { db } from '../firebase';
+import { ref as dbRef, onValue, runTransaction } from 'firebase/database';
 
 const props = defineProps<{
   book: any;
 }>();
 
 const emit = defineEmits(['close']);
+const showComments = ref(false);
+const bookLikes = ref(0);
+const isLiked = ref(false);
+const userName = ref(localStorage.getItem('userName') || 'Anonym');
+
+onMounted(() => {
+  userName.value = localStorage.getItem('userName') || 'Anonym';
+  loadBookLikes();
+});
+
+const loadBookLikes = () => {
+  const isFirebaseConfigured = !db.app.options.apiKey?.includes('SINING_API_KEY');
+  const userLikes = JSON.parse(localStorage.getItem('user_book_likes') || '{}');
+  isLiked.value = !!userLikes[`${userName.value}_${props.book.id}`];
+
+  if (isFirebaseConfigured) {
+    const likesRef = dbRef(db, `bookLikes/${props.book.id}`);
+    onValue(likesRef, (snapshot) => {
+      bookLikes.value = snapshot.val() || 0;
+    });
+  } else {
+    // Lokal rejimda kitobga qo'shilgan likelarni hisoblash
+    const allLikes = JSON.parse(localStorage.getItem('all_book_likes') || '{}');
+    bookLikes.value = allLikes[props.book.id] || 0;
+  }
+};
+
+const toggleBookLike = () => {
+  const isFirebaseConfigured = !db.app.options.apiKey?.includes('SINING_API_KEY');
+  const userLikes = JSON.parse(localStorage.getItem('user_book_likes') || '{}');
+  const userKey = `${userName.value}_${props.book.id}`;
+
+  if (isFirebaseConfigured) {
+    const likesRef = dbRef(db, `bookLikes/${props.book.id}`);
+    runTransaction(likesRef, (currentLikes) => {
+      let likes = currentLikes || 0;
+      if (isLiked.value) {
+        likes = Math.max(0, likes - 1);
+        delete userLikes[userKey];
+        isLiked.value = false;
+      } else {
+        likes++;
+        userLikes[userKey] = true;
+        isLiked.value = true;
+      }
+      return likes;
+    }).then(() => {
+      localStorage.setItem('user_book_likes', JSON.stringify(userLikes));
+    });
+  } else {
+    // Lokal fallback
+    const allLikes = JSON.parse(localStorage.getItem('all_book_likes') || '{}');
+    if (isLiked.value) {
+      allLikes[props.book.id] = Math.max(0, (allLikes[props.book.id] || 0) - 1);
+      delete userLikes[userKey];
+      isLiked.value = false;
+    } else {
+      allLikes[props.book.id] = (allLikes[props.book.id] || 0) + 1;
+      userLikes[userKey] = true;
+      isLiked.value = true;
+    }
+    localStorage.setItem('all_book_likes', JSON.stringify(allLikes));
+    localStorage.setItem('user_book_likes', JSON.stringify(userLikes));
+    bookLikes.value = allLikes[props.book.id];
+  }
+};
 </script>
 
 <template>
@@ -15,7 +84,13 @@ const emit = defineEmits(['close']);
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
       </button>
       <h2 class="panel-title">Kitob ma'lumotlari</h2>
+      <button class="book-like-btn" :class="{ active: isLiked }" @click="toggleBookLike">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" :fill="isLiked ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+        <span class="like-count">{{ bookLikes }}</span>
+      </button>
     </div>
+
+    <BookCommentsPanel v-if="showComments" :bookId="book.id" @close="showComments = false" />
 
     <div class="panel-content" v-if="book">
       <div class="image-wrapper">
@@ -29,7 +104,7 @@ const emit = defineEmits(['close']);
         <div class="rating-row">
           <span class="star">⭐</span>
           <span class="rating-val">{{ book.rating }}</span>
-          <span class="reviews-count">({{ book.reviewsCount }} sharh)</span>
+          <span class="reviews-count">({{ book.reviewsCount }} sharh) • ❤️ {{ bookLikes }} likes</span>
         </div>
 
         <div class="price-box">
@@ -69,6 +144,10 @@ const emit = defineEmits(['close']);
       <div class="panel-actions">
         <button class="btn-primary">Ijaraga olish</button>
         <button class="btn-outline">Yozish</button>
+        <button class="btn-comments-new" @click="showComments = !showComments">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          <span>Komentariya</span>
+        </button>
       </div>
     </div>
   </div>
@@ -119,6 +198,29 @@ const emit = defineEmits(['close']);
   font-size: 18px;
   font-weight: 800;
   color: var(--text-heading);
+  flex: 1;
+}
+
+.debug-label {
+  font-size: 10px;
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+.comments-toggle-btn {
+  background: var(--primary);
+  border: none;
+  padding: 0 12px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  position: relative;
+  transition: all 0.2s;
+  z-index: 20;
 }
 
 .panel-content {
@@ -295,5 +397,51 @@ const emit = defineEmits(['close']);
   border-radius: 8px;
   font-weight: 700;
   cursor: pointer;
+}
+
+.btn-comments-new {
+  flex: 1;
+  background: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.btn-comments-new:hover {
+  background: #e60000;
+  transform: translateY(-2px);
+}
+
+.book-like-btn {
+  background: var(--bg);
+  border: none;
+  padding: 0 16px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+
+.book-like-btn.active {
+  background: rgba(255, 77, 79, 0.1);
+  color: #ff4d4f;
+}
+
+.like-count {
+  font-weight: 800;
+  font-size: 14px;
 }
 </style>

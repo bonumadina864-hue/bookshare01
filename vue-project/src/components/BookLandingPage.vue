@@ -189,8 +189,8 @@ const closePanel = () => {
 .side-panel-wrapper {
   width: 450px;
   position: sticky;
-  top: 0;
-  height: 100vh;
+  top: 80px;
+  height: calc(100vh - 80px);
   box-shadow: -10px 0 30px rgba(0,0,0,0.1);
   z-index: 100;
   background: var(--surface);

@@ -26,6 +26,10 @@ const translations: Record<string, any> = {
     forgotPassword: 'Parolni unutdingizmi?',
     socialLogin: 'Google orqali kirish',
     or: 'yoki',
+    comments: 'Sharhlar',
+    noComments: 'Hali sharhlar yo\'q. Birinchi bo\'lib yozing!',
+    writeComment: 'Fikringizni qoldiring...',
+    loginToComment: 'Sharh yozish uchun tizimga kiring',
     footerText: 'BookShare hamjamiyatiga qo\'shiling'
   },
   RU: {
@@ -53,6 +57,10 @@ const translations: Record<string, any> = {
     forgotPassword: 'Забыли пароль?',
     socialLogin: 'Войти через Google',
     or: 'или',
+    comments: 'Комментарии',
+    noComments: 'Комментариев пока нет. Будьте первым!',
+    writeComment: 'Оставьте свой отзыв...',
+    loginToComment: 'Войдите, чтобы оставить комментарий',
     footerText: 'Присоединяйтесь к сообществу BookShare'
   },
   EN: {
@@ -80,6 +88,10 @@ const translations: Record<string, any> = {
     forgotPassword: 'Forgot password?',
     socialLogin: 'Login with Google',
     or: 'or',
+    comments: 'Comments',
+    noComments: 'No comments yet. Be the first to write!',
+    writeComment: 'Leave your feedback...',
+    loginToComment: 'Login to leave a comment',
     footerText: 'Join the BookShare community'
   }
 }
