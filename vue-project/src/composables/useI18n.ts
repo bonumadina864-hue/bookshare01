@@ -71,7 +71,6 @@ const translations: Record<string, any> = {
     search: 'Qidiruv',
     favorites: 'Sevimlilar',
     profile: 'Profil'
-    profile: 'Profil'
   },
   RU: {
     about: 'О нас',
@@ -143,7 +142,6 @@ const translations: Record<string, any> = {
     search: 'Поиск',
     favorites: 'Избранное',
     profile: 'Профиль'
-    profile: 'Профиль'
   },
   EN: {
     about: 'About Us',
@@ -214,7 +212,6 @@ const translations: Record<string, any> = {
     home: 'Home',
     search: 'Search',
     favorites: 'Favorites',
-    profile: 'Profile'
     profile: 'Profile'
   }
 }
