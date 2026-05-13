@@ -19,31 +19,14 @@ const categories = computed(() => [
 const activeCategoryIndex = ref(0);
 
 import { booksData as initialBooks } from '../data/books';
-import { db } from '../firebase';
-import { ref as dbRef, onValue } from 'firebase/database';
 import { onMounted } from 'vue';
 
 const books = ref([...initialBooks]);
 
 onMounted(() => {
-  const isFirebaseConfigured = !db.app.options.apiKey?.includes('SINING_API_KEY');
-  if (isFirebaseConfigured) {
-    const globalBooksRef = dbRef(db, 'globalBooks');
-    onValue(globalBooksRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        const remoteBooks = Object.keys(data).map(key => ({
-          ...data[key],
-          id: key
-        }));
-        books.value = [...initialBooks, ...remoteBooks];
-      }
-    });
-  } else {
-    const globalBooks = JSON.parse(localStorage.getItem('global_books') || '[]');
-    if (globalBooks.length > 0) {
-      books.value = [...initialBooks, ...globalBooks];
-    }
+  const globalBooks = JSON.parse(localStorage.getItem('global_books') || '[]');
+  if (globalBooks.length > 0) {
+    books.value = [...initialBooks, ...globalBooks];
   }
 });
 

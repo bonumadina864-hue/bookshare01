@@ -20,22 +20,26 @@ const loadFavorites = () => {
   const userLikes = JSON.parse(localStorage.getItem('user_book_likes') || '{}');
   const userLikeKeys = Object.keys(userLikes).filter(k => k.startsWith(userName.value + '_'));
   
-  // Tartiblash: oxirgi bosilganlari boshida chiqishi uchun (yoki vaqt bo'yicha kamayish tartibida)
+  // Tartiblash: oxirgi bosilganlari boshida chiqishi uchun
   userLikeKeys.sort((a, b) => (userLikes[b] || 0) - (userLikes[a] || 0));
   
-  // Eng ko'pi bilan 30 ta
   const top30Keys = userLikeKeys.slice(0, 30);
+  const likedIds = top30Keys.map(k => k.split('_')[1]);
   
-  const likedIds = top30Keys.map(k => Number(k.split('_')[1]));
+  // Barcha kitoblar (statik + foydalanuvchilar qo'shgan)
+  const globalBooks = JSON.parse(localStorage.getItem('global_books') || '[]');
+  const allAvailableBooks = [...booksData, ...globalBooks];
   
-  favoriteBooks.value = booksData.filter(b => likedIds.includes(b.id)).map(b => ({
-    ...b,
-    location: `${b.location.district}, ${b.location.distance}`,
-    price: `${b.price} ${b.pricePeriod}`
-  }));
+  favoriteBooks.value = allAvailableBooks
+    .filter(b => likedIds.includes(String(b.id)))
+    .map(b => ({
+      ...b,
+      location: typeof b.location === 'object' ? `${b.location.district}, ${b.location.distance}` : b.location,
+      price: b.price.includes('so\'m') ? b.price : `${b.price} ${b.pricePeriod}`
+    }));
 };
 
-const handleSelectBook = (id: number) => {
+const handleSelectBook = (id: number | string) => {
   router.push(`/book/${id}`);
 };
 </script>

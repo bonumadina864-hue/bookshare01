@@ -2,13 +2,11 @@
 import { ref, onMounted, computed } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import AddBookModal from '../components/AddBookModal.vue';
-import { db } from '../firebase';
-import { ref as dbRef, push, set, onValue } from 'firebase/database';
 
 const { t } = useI18n();
 const showAddBookModal = ref(false);
 const showDeleteConfirm = ref(false);
-const bookIdToDelete = ref<number | null>(null);
+const bookIdToDelete = ref<number | string | null>(null);
 
 const userName = ref(localStorage.getItem('userName') || 'Jasur');
 const isEditingName = ref(false);
@@ -16,7 +14,7 @@ const newName = ref(userName.value);
 const profilePic = ref(localStorage.getItem('profilePic') || '');
 
 // Mock user's books - Empty for fresh start
-const userBooks = ref([]);
+const userBooks = ref<any[]>([]);
 
 // Other stats
 const savedCount = ref(12);
@@ -58,7 +56,7 @@ const cancelEdit = () => {
   isEditingName.value = false;
 };
 
-const deleteBook = (id: number) => {
+const deleteBook = (id: number | string) => {
   bookIdToDelete.value = id;
   showDeleteConfirm.value = true;
 };
@@ -71,28 +69,10 @@ const confirmDelete = () => {
     userBooks.value = userBooks.value.filter(b => b.id !== bookIdToDelete.value);
     localStorage.setItem('myUploadedBooks', JSON.stringify(userBooks.value));
 
-    // 2. Global bazadan o'chirish (Firebase yoki localStorage fallback)
-    const isFirebaseConfigured = !db.app.options.apiKey?.includes('SINING_API_KEY');
-    if (isFirebaseConfigured) {
-      // Firebase dan o'chirish (id bo'yicha)
-      const globalBooksRef = dbRef(db, 'globalBooks');
-      onValue(globalBooksRef, (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          Object.keys(data).forEach(key => {
-            // Agar id yoki sarlavha mos kelsa o'chirish
-            if (data[key].id === bookIdToDelete.value || data[key].title === bookToRemove?.title) {
-              set(dbRef(db, `globalBooks/${key}`), null);
-            }
-          });
-        }
-      }, { onlyOnce: true });
-    } else {
-      // LocalStorage global_books dan o'chirish
-      let globalBooks = JSON.parse(localStorage.getItem('global_books') || '[]');
-      globalBooks = globalBooks.filter((b: any) => b.id !== bookIdToDelete.value && b.title !== bookToRemove?.title);
-      localStorage.setItem('global_books', JSON.stringify(globalBooks));
-    }
+    // 2. LocalStorage global_books dan o'chirish
+    let globalBooks = JSON.parse(localStorage.getItem('global_books') || '[]');
+    globalBooks = globalBooks.filter((b: any) => b.id !== bookIdToDelete.value && b.title !== bookToRemove?.title);
+    localStorage.setItem('global_books', JSON.stringify(globalBooks));
 
     showDeleteConfirm.value = false;
     bookIdToDelete.value = null;
