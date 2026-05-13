@@ -5,7 +5,7 @@ import BookGrid from '../components/BookGrid.vue'
 import BookLandingPage from '../components/BookLandingPage.vue'
 import BookDetailSidePanel from '../components/BookDetailSidePanel.vue'
 import { booksData as initialBooks } from '../data/books'
-import { db } from '../firebase'
+import { db, isFirebaseLive } from '../firebase'
 import { ref as dbRef, onValue } from 'firebase/database'
 
 const isLoggedIn = ref(false)
@@ -20,8 +20,7 @@ const selectedBook = computed(() => {
 onMounted(() => {
   isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true'
 
-  const isFirebaseConfigured = !db.app.options.apiKey?.includes('SINING_API_KEY');
-  if (isFirebaseConfigured) {
+  if (isFirebaseLive() && db) {
     const globalBooksRef = dbRef(db, 'globalBooks');
     onValue(globalBooksRef, (snapshot) => {
       const data = snapshot.val();

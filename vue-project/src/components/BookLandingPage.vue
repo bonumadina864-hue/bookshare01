@@ -19,15 +19,14 @@ const categories = computed(() => [
 const activeCategoryIndex = ref(0);
 
 import { booksData as initialBooks } from '../data/books';
-import { db } from '../firebase';
+import { db, isFirebaseLive } from '../firebase';
 import { ref as dbRef, onValue } from 'firebase/database';
 import { onMounted } from 'vue';
 
 const books = ref([...initialBooks]);
 
 onMounted(() => {
-  const isFirebaseConfigured = !db.app.options.apiKey?.includes('SINING_API_KEY');
-  if (isFirebaseConfigured) {
+  if (isFirebaseLive() && db) {
     const globalBooksRef = dbRef(db, 'globalBooks');
     onValue(globalBooksRef, (snapshot) => {
       const data = snapshot.val();

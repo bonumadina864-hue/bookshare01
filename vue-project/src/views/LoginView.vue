@@ -1,19 +1,34 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { useI18n } from '../composables/useI18n'
+import { withBasePath } from '../utils/baseHref'
 
 const { t } = useI18n()
-const router = useRouter()
 const email = ref('')
 const password = ref('')
 
+const errorMessage = ref('')
+
 const handleLogin = () => {
-  localStorage.setItem('isLoggedIn', 'true')
-  if (!localStorage.getItem('userName')) {
-    localStorage.setItem('userName', email.value.split('@')[0])
+  errorMessage.value = ''
+  const em = email.value.trim()
+  const pw = password.value
+  if (!em || !pw) {
+    errorMessage.value = 'Email va parolni kiriting'
+    return
   }
-  window.location.href = '/'
+  if (!em.includes('@')) {
+    errorMessage.value = "To'g'ri email kiriting"
+    return
+  }
+
+  localStorage.setItem('isLoggedIn', 'true')
+  const existing = localStorage.getItem('userName')?.trim()
+  if (!existing) {
+    localStorage.setItem('userName', em.split('@')[0] || 'Foydalanuvchi')
+  }
+
+  window.location.assign(withBasePath('/'))
 }
 </script>
 
@@ -43,8 +58,10 @@ const handleLogin = () => {
             <span class="input-icon">🔒</span>
             <input type="password" v-model="password" placeholder="Parolingizni kiriting" required />
           </div>
-          <a href="#" class="forgot-link">{{ t('forgotPassword') }}</a>
+          <a href="#" class="forgot-link" @click.prevent>{{ t('forgotPassword') }}</a>
         </div>
+
+        <p v-if="errorMessage" class="error-text">{{ errorMessage }}</p>
 
         <button type="submit" class="submit-btn">
           {{ t('login') }} <span class="arrow">></span>
@@ -56,14 +73,14 @@ const handleLogin = () => {
       </div>
 
       <div class="social-btns">
-        <button class="social-btn">
+        <button type="button" class="social-btn">
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="18" />
           {{ t('socialLogin') }}
         </button>
       </div>
 
       <p class="footer-text">
-        {{ t('noAccount') }} <router-link to="/register" class="link">{{ t('register') }}</router-link>
+        {{ t('noAccount') }} <a :href="withBasePath('/register')" class="link">{{ t('register') }}</a>
       </p>
     </div>
   </div>
@@ -224,5 +241,14 @@ const handleLogin = () => {
 .link {
   color: var(--primary);
   font-weight: 700;
+  text-decoration: none;
+}
+
+.error-text {
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  margin: -8px 0 8px;
 }
 </style>

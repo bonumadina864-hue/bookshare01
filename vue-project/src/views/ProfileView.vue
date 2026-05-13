@@ -2,7 +2,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import AddBookModal from '../components/AddBookModal.vue';
-import { db } from '../firebase';
+import { db, isFirebaseLive } from '../firebase';
 import { ref as dbRef, push, set, onValue } from 'firebase/database';
 
 const { t } = useI18n();
@@ -72,8 +72,7 @@ const confirmDelete = () => {
     localStorage.setItem('myUploadedBooks', JSON.stringify(userBooks.value));
 
     // 2. Global bazadan o'chirish (Firebase yoki localStorage fallback)
-    const isFirebaseConfigured = !db.app.options.apiKey?.includes('SINING_API_KEY');
-    if (isFirebaseConfigured) {
+    if (isFirebaseLive() && db) {
       // Firebase dan o'chirish (id bo'yicha)
       const globalBooksRef = dbRef(db, 'globalBooks');
       onValue(globalBooksRef, (snapshot) => {
@@ -123,8 +122,7 @@ const handleSaveBook = (bookData: any) => {
   localStorage.setItem('myUploadedBooks', JSON.stringify(userBooks.value));
 
   // Push to global store (Firebase or localStorage fallback)
-  const isFirebaseConfigured = !db.app.options.apiKey?.includes('SINING_API_KEY');
-  if (isFirebaseConfigured) {
+  if (isFirebaseLive() && db) {
     const globalBooksRef = dbRef(db, 'globalBooks');
     const newBookRef = push(globalBooksRef);
     set(newBookRef, newBook);
