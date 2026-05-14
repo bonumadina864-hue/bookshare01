@@ -291,15 +291,22 @@ const { t } = useI18n();
 }
 
 @media (max-width: 992px) {
+  .about-hero { padding: 60px 0; }
   .hero-title { font-size: 40px; }
   .grid-2 { grid-template-columns: 1fr; gap: 40px; }
   .features-grid { grid-template-columns: repeat(2, 1fr); }
+  .mission-section, .features-section, .join-section { padding: 60px 0; }
 }
 
 @media (max-width: 600px) {
-  .hero-title { font-size: 32px; }
+  .about-hero { padding: 40px 0; }
+  .hero-title { font-size: 28px; letter-spacing: -1px; }
+  .hero-desc { font-size: 16px; }
   .features-grid { grid-template-columns: 1fr; }
-  .join-card { padding: 40px 20px; }
-  .join-card h2 { font-size: 28px; }
+  .join-card { padding: 40px 20px; border-radius: 24px; }
+  .join-card h2 { font-size: 24px; }
+  .join-card p { font-size: 15px; }
+  .cta-btn { width: 100%; text-align: center; }
+  .section-title { font-size: 24px; }
 }
 </style>

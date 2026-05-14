@@ -120,13 +120,6 @@ const selectBook = (id: number | string) => {
 
     <div v-else class="discovery">
       <div class="discovery-inner container">
-        <div class="discovery-top">
-          <span class="brand">Book<span class="brand-accent">Share</span></span>
-          <button type="button" class="icon-btn" :aria-label="t('menu')">
-            <span class="burger" />
-          </button>
-        </div>
-
         <div class="search-field">
           <span class="field-icon" aria-hidden="true">
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -300,45 +293,9 @@ const selectBook = (id: number | string) => {
 }
 
 .discovery-inner {
-  padding-top: 20px;
-  max-width: 720px;
-}
-
-.discovery-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-
-.brand {
-  font-size: 22px;
-  font-weight: 900;
-  letter-spacing: -0.5px;
-  color: var(--primary);
-}
-
-.brand-accent {
-  color: var(--text-heading);
-}
-
-.icon-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.burger {
-  width: 18px;
-  height: 2px;
-  background: var(--text-heading);
-  border-radius: 1px;
-  box-shadow: 0 -6px 0 var(--text-heading), 0 6px 0 var(--text-heading);
+  padding: 24px var(--container-px) 100px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .search-field {
@@ -347,14 +304,21 @@ const selectBook = (id: number | string) => {
   gap: 12px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 14px 18px;
-  margin-bottom: 22px;
-  box-shadow: var(--shadow);
+  border-radius: 20px;
+  padding: 16px 20px;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.search-field:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 8px 30px rgba(45, 49, 166, 0.1);
 }
 
 .field-icon {
-  color: var(--text-muted);
+  color: var(--primary);
+  opacity: 0.7;
   flex-shrink: 0;
 }
 
@@ -362,151 +326,183 @@ const selectBook = (id: number | string) => {
   flex: 1;
   border: none;
   background: transparent;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 500;
   color: var(--text-heading);
   outline: none;
 }
 
 .block {
-  margin-bottom: 20px;
+  margin-bottom: 32px;
 }
 
 .block-title {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 800;
   color: var(--text-heading);
-  margin-bottom: 10px;
+  margin-bottom: 16px;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.block-title.tight {
-  margin-bottom: 0;
+  letter-spacing: 0.05em;
 }
 
 .pill-row {
   display: flex;
   flex-wrap: nowrap;
-  gap: 8px;
+  gap: 10px;
   overflow-x: auto;
-  padding-bottom: 4px;
+  padding: 4px 0 12px;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.pill-row::-webkit-scrollbar {
+  display: none;
 }
 
 .pill {
   flex-shrink: 0;
-  padding: 8px 14px;
-  border-radius: 999px;
+  padding: 10px 18px;
+  border-radius: 14px;
   border: 1px solid var(--border);
   background: var(--surface);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--text);
-  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.pill:hover {
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 .filter-pill {
   flex-shrink: 0;
-  padding: 8px 14px;
-  border-radius: 999px;
+  padding: 10px 20px;
+  border-radius: 14px;
   border: 1px solid var(--border);
   background: var(--surface);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--text-heading);
+  transition: all 0.2s;
 }
 
 .filter-pill.active {
-  background: var(--accent-orange);
-  border-color: var(--accent-orange);
+  background: var(--primary);
+  border-color: var(--primary);
   color: #fff;
+  box-shadow: 0 4px 12px rgba(45, 49, 166, 0.2);
 }
 
 .section-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 10px;
+  margin-bottom: 16px;
 }
 
 .linkish {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--primary);
-  text-decoration: underline;
-  background: none;
-  border: none;
-  padding: 0;
+  text-decoration: none;
   cursor: pointer;
-  font-family: inherit;
 }
 
 .map-caption {
-  margin-top: 10px;
-  font-size: 13px;
+  margin-top: 12px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--text-muted);
 }
 
 .price-row {
   display: flex;
-  gap: 12px;
+  gap: 16px;
 }
 
 .price-field {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .price-hint {
   font-size: 12px;
   font-weight: 700;
   color: var(--text-muted);
+  text-transform: uppercase;
 }
 
 .price-input {
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 10px 12px;
-  font-size: 14px;
+  border-radius: 14px;
+  padding: 12px 16px;
+  font-size: 15px;
   font-weight: 600;
   background: var(--surface);
   color: var(--text-heading);
-  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.price-input:focus {
+  border-color: var(--primary);
 }
 
 .result-line {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--text-muted);
-  margin-bottom: 14px;
+  margin-bottom: 20px;
 }
 
 .books-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
 }
 
 .empty-books {
-  padding: 32px;
+  padding: 48px 24px;
   text-align: center;
   color: var(--text-muted);
   font-weight: 600;
   background: var(--surface);
-  border-radius: 16px;
+  border-radius: 20px;
   border: 1px dashed var(--border);
+}
+
+@media (max-width: 600px) {
+  .discovery-inner {
+    padding-top: 20px;
+  }
+  
+  .search-field {
+    padding: 14px 16px;
+    margin-bottom: 24px;
+  }
+  
+  .price-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .block {
+    margin-bottom: 28px;
+  }
+  
+  .books-grid {
+    gap: 12px;
+  }
 }
 
 @media (min-width: 900px) {
   .books-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(3, 1fr);
   }
-
   .discovery-inner {
     max-width: 960px;
   }

@@ -84,6 +84,7 @@ const toggleBookLike = () => {
 
 <template>
   <div class="side-panel">
+    <div class="mobile-drag-handle" @click="emit('close')"></div>
     <div class="panel-header">
       <button class="close-btn" @click="emit('close')">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -153,8 +154,10 @@ const toggleBookLike = () => {
       </div>
       
       <div class="panel-actions">
-        <button class="btn-primary">{{ t('rentNow') }}</button>
-        <button class="btn-outline">{{ t('writeMessage') }}</button>
+        <div class="main-buttons">
+          <button class="btn-primary">{{ t('rentNow') }}</button>
+          <button class="btn-outline">{{ t('writeMessage') }}</button>
+        </div>
         <button class="btn-comments-new" @click="showComments = !showComments">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
           <span>{{ t('comments') }}</span>
@@ -179,6 +182,21 @@ const toggleBookLike = () => {
 @keyframes slideIn {
   from { transform: translateX(100%); }
   to { transform: translateX(0); }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.mobile-drag-handle {
+  display: none;
+  width: 40px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 12px auto 0;
+  cursor: pointer;
 }
 
 .panel-header {
@@ -211,28 +229,6 @@ const toggleBookLike = () => {
   font-weight: 800;
   color: var(--text-heading);
   flex: 1;
-}
-
-.debug-label {
-  font-size: 10px;
-  font-weight: 700;
-  margin-left: 4px;
-}
-
-.comments-toggle-btn {
-  background: var(--primary);
-  border: none;
-  padding: 0 12px;
-  height: 40px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: white;
-  position: relative;
-  transition: all 0.2s;
-  z-index: 20;
 }
 
 .panel-content {
@@ -390,6 +386,7 @@ const toggleBookLike = () => {
 
 .panel-actions {
   display: flex;
+  flex-direction: column;
   gap: 12px;
   position: sticky;
   bottom: 0;
@@ -398,13 +395,18 @@ const toggleBookLike = () => {
   border-top: 1px solid var(--border);
 }
 
+.main-buttons {
+  display: flex;
+  gap: 12px;
+}
+
 .btn-primary {
   flex: 1;
   background: var(--primary);
   color: white;
   border: none;
-  padding: 12px;
-  border-radius: 8px;
+  padding: 14px;
+  border-radius: 12px;
   font-weight: 700;
   cursor: pointer;
 }
@@ -414,19 +416,19 @@ const toggleBookLike = () => {
   background: transparent;
   border: 1px solid var(--border);
   color: var(--text-heading);
-  padding: 12px;
-  border-radius: 8px;
+  padding: 14px;
+  border-radius: 12px;
   font-weight: 700;
   cursor: pointer;
 }
 
 .btn-comments-new {
-  flex: 1;
+  width: 100%;
   background: #ff4d4f;
   color: white;
   border: none;
-  padding: 12px;
-  border-radius: 8px;
+  padding: 14px;
+  border-radius: 12px;
   font-weight: 700;
   cursor: pointer;
   display: flex;
@@ -434,11 +436,6 @@ const toggleBookLike = () => {
   justify-content: center;
   gap: 8px;
   transition: all 0.2s;
-}
-
-.btn-comments-new:hover {
-  background: #e60000;
-  transform: translateY(-2px);
 }
 
 .book-like-btn {
@@ -464,5 +461,20 @@ const toggleBookLike = () => {
 .like-count {
   font-weight: 800;
   font-size: 14px;
+}
+
+@media (max-width: 1024px) {
+  .side-panel {
+    animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-left: none;
+  }
+  
+  .mobile-drag-handle {
+    display: block;
+  }
+  
+  .panel-header {
+    padding: 12px 20px 20px;
+  }
 }
 </style>

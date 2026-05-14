@@ -73,11 +73,11 @@ onMounted(() => {
 }
 
 .home-hero-wrapper {
-  margin: 20px;
+  margin: 0;
   margin-bottom: 60px;
   border-radius: 40px;
   overflow: hidden;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
 .home-hero-wrapper :deep(.hero-slider) {
@@ -88,7 +88,7 @@ onMounted(() => {
 .side-panel-wrapper {
   width: 450px;
   position: sticky;
-  top: 80px; /* Below header */
+  top: 80px;
   height: calc(100vh - 80px);
   box-shadow: -10px 0 30px rgba(0,0,0,0.1);
   z-index: 100;
@@ -97,11 +97,40 @@ onMounted(() => {
 }
 
 @media (max-width: 1024px) {
+  .home-layout {
+    flex-direction: column;
+  }
+  
+  .main-content {
+    padding: 16px;
+  }
+  
+  .home-hero-wrapper {
+    margin: 0;
+    margin-bottom: 40px;
+    border-radius: 24px;
+  }
+
   .side-panel-wrapper {
     position: fixed;
+    bottom: 0;
+    top: auto;
+    left: 0;
     right: 0;
-    width: 90%;
-    max-width: 400px;
+    width: 100%;
+    height: 85vh;
+    border-left: none;
+    border-top: 1px solid var(--border);
+    border-top-left-radius: 32px;
+    border-top-right-radius: 32px;
+    z-index: 2000;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-hero-wrapper {
+    border-radius: 0;
+    margin: -16px -16px 32px -16px; /* Bleed out on mobile */
   }
 }
 </style>

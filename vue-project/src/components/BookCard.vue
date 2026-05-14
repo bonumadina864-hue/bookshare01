@@ -110,6 +110,12 @@ const goToDetail = () => {
   flex-grow: 1;
 }
 
+@media (max-width: 768px) {
+  .book-info {
+    padding: 12px;
+  }
+}
+
 .book-title {
   font-size: 16px;
   font-weight: 800;
@@ -120,6 +126,13 @@ const goToDetail = () => {
   -webkit-box-orient: vertical;
   overflow: hidden;
   min-height: 40px;
+}
+
+@media (max-width: 768px) {
+  .book-title {
+    font-size: 14px;
+    min-height: 34px;
+  }
 }
 
 .book-details {
@@ -135,6 +148,13 @@ const goToDetail = () => {
   margin-bottom: 12px;
 }
 
+@media (max-width: 768px) {
+  .location {
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
+}
+
 .price-row {
   display: flex;
   justify-content: space-between;
@@ -145,6 +165,12 @@ const goToDetail = () => {
   font-size: 16px;
   font-weight: 900;
   color: var(--primary);
+}
+
+@media (max-width: 768px) {
+  .price {
+    font-size: 14px;
+  }
 }
 
 .add-btn {
@@ -159,6 +185,14 @@ const goToDetail = () => {
   font-size: 20px;
   font-weight: 600;
   transition: all 0.2s;
+}
+
+@media (max-width: 768px) {
+  .add-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 18px;
+  }
 }
 
 .add-btn:hover {
