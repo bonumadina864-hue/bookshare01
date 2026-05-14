@@ -576,12 +576,6 @@ const onFileChange = (e: Event) => {
   margin-bottom: 20px;
 }
 
-@media (max-width: 768px) {
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
 .add-book-card {
   display: flex;
   flex-direction: column;
@@ -608,6 +602,79 @@ const onFileChange = (e: Event) => {
   font-size: 16px;
   font-weight: 700;
 }
+
+@media (max-width: 768px) {
+  .profile-page {
+    padding: 20px 0 80px;
+  }
+  .profile-card {
+    padding: 24px;
+    border-radius: 24px;
+    margin-bottom: 40px;
+  }
+  .user-name {
+    font-size: 24px;
+  }
+  .avatar-container {
+    width: 100px;
+    height: 100px;
+  }
+  .profile-placeholder {
+    font-size: 40px;
+  }
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding-top: 24px;
+  }
+  .stat-item {
+    padding: 12px;
+  }
+  .stat-value {
+    font-size: 20px;
+  }
+  .stat-label {
+    font-size: 11px;
+  }
+  .books-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .add-book-card {
+    min-height: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .books-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .book-info {
+    padding: 10px;
+  }
+  .book-title {
+    font-size: 14px;
+  }
+  .book-author {
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+  .book-price {
+    font-size: 12px;
+  }
+  .add-book-card {
+    min-height: 180px;
+  }
+  .add-icon {
+    font-size: 40px;
+  }
+  .add-text {
+    font-size: 12px;
+  }
+}
+
+
 /* Custom Confirm Modal Styles */
 .confirm-overlay {
   position: fixed;

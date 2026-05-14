@@ -77,8 +77,20 @@ defineEmits(['select']);
 
 @media (max-width: 600px) {
   .grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
+    display: flex;
+    overflow-x: auto;
+    gap: 16px;
+    padding: 4px 0 20px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 calc(var(--container-px) * -1);
+    padding: 4px var(--container-px) 20px;
+  }
+  .grid::-webkit-scrollbar {
+    display: none;
+  }
+  .grid > * {
+    flex: 0 0 180px;
   }
 }
 </style>

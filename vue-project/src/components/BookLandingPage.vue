@@ -186,6 +186,7 @@ const closePanel = () => {
 .landing-page {
   background: var(--bg);
   min-height: 100vh;
+  padding-bottom: 80px; /* Space for mobile nav */
 }
 
 .main-layout {
@@ -209,15 +210,6 @@ const closePanel = () => {
   z-index: 100;
   background: var(--surface);
   border-left: 1px solid var(--border);
-}
-
-@media (max-width: 1024px) {
-  .side-panel-wrapper {
-    position: fixed;
-    right: 0;
-    width: 90%;
-    max-width: 400px;
-  }
 }
 
 .main-header {
@@ -405,6 +397,7 @@ const closePanel = () => {
   bottom: -28px;
   display: flex;
   justify-content: center;
+  padding: 0 var(--container-px);
 }
 
 .search-bar {
@@ -480,9 +473,78 @@ const closePanel = () => {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
+  .main-layout {
+    flex-direction: column;
+  }
+  
+  .side-panel-wrapper {
+    position: fixed;
+    bottom: 0;
+    top: auto;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 85vh;
+    border-left: none;
+    border-top: 1px solid var(--border);
+    border-top-left-radius: 32px;
+    border-top-right-radius: 32px;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(0);
+    z-index: 2000;
+  }
+
   .books-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-header {
+    padding: 30px 0 60px 0;
+    border-bottom-left-radius: 24px;
+    border-bottom-right-radius: 24px;
+  }
+  
+  .user-name {
+    font-size: 24px;
+  }
+  
+  .avatar-wrapper {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .books-grid {
+    display: flex;
+    overflow-x: auto;
+    gap: 16px;
+    padding: 4px var(--container-px) 20px;
+    margin: 0 calc(var(--container-px) * -1);
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .books-grid::-webkit-scrollbar {
+    display: none;
+  }
+  .books-grid > * {
+    flex: 0 0 180px;
+  }
+  
+  .section-header h2 {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-bar {
+    padding: 12px 16px;
+  }
+  
+  .categories-section {
+    margin-top: 60px;
   }
 }
 </style>

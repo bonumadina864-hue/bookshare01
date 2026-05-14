@@ -197,6 +197,9 @@ const goToSlide = (index: number) => {
 }
 
 @media (max-width: 992px) {
+  .hero-slider {
+    padding: 60px 0;
+  }
   .slide-grid {
     grid-template-columns: 1fr;
     text-align: center;
@@ -209,6 +212,30 @@ const goToSlide = (index: number) => {
     width: 100%;
     max-width: 400px;
     height: 350px;
+    margin: 0 auto;
+  }
+  .title {
+    font-size: 36px;
+  }
+  .description {
+    font-size: 16px;
+    margin-bottom: 32px;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-slider {
+    padding: 40px 0;
+  }
+  .title {
+    font-size: 28px;
+    letter-spacing: -1px;
+  }
+  .visual-wrapper {
+    height: 280px;
+  }
+  .image-box {
+    border-radius: 40px;
   }
 }
 </style>

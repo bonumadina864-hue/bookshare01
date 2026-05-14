@@ -120,7 +120,8 @@ const translations: Record<string, any> = {
     hiwS5Title: '5. Boshqa sahifalar',
     hiwS5Body: 'Har bir kitob uchun `/book/:id` marshruti mavjud. `Profil` va `Sevimlilar` bo\'limlari shaxsiy ro\'yxat va saqlanganlar bilan ishlaydi. `Biz haqimizda` sahifasida loyiha maqsadi va afzalliklari matn ko\'rinishida berilgan.',
     hiwS6Title: '6. Interfeys',
-    hiwS6Body: 'Yuqoridagi til tanlovi (UZ / RU / EN) va tun/kun mavzusi (`ThemeToggle`) barcha ochiq sahifalarda ishlaydi. Savollar bo\'lsa, avvalo ushbu yo\'riqnoma va «Biz haqimizda» bo\'limlaridan foydalaning.'eb053937a35dbb04
+    hiwS6Body: 'Yuqoridagi til tanlovi (UZ / RU / EN) va tun/kun mavzusi (`ThemeToggle`) barcha ochiq sahifalarda ishlaydi. Savollar bo\'lsa, avvalo ushbu yo\'riqnoma va «Biz haqimizda» bo\'limlaridan foydalaning.',
+    viewProfile: 'Profilni ko\'rish'
   },
   RU: {
     about: 'О нас',
@@ -241,7 +242,8 @@ const translations: Record<string, any> = {
     hiwS5Title: '5. Другие разделы',
     hiwS5Body: 'Карточка книги доступна по маршруту `/book/:id`. Есть «Профиль» и «Избранное». На странице «О нас» описаны цели проекта.',
     hiwS6Title: '6. Интерфейс',
-    hiwS6Body: 'Переключатель языка (UZ / RU / EN) и тёмная тема работают на всех публичных страницах.'
+    hiwS6Body: 'Переключатель языка (UZ / RU / EN) и тёмная тема работают на всех публичных страницах.',
+    viewProfile: 'Посмотреть профиль'
   },
   EN: {
     about: 'About Us',
@@ -362,7 +364,8 @@ const translations: Record<string, any> = {
     hiwS5Title: '5. Other routes',
     hiwS5Body: 'Each book also has a dedicated page at `/book/:id`. Profile and Favorites sections manage your lists. The About page explains mission and features in marketing copy.',
     hiwS6Title: '6. UI preferences',
-    hiwS6Body: 'Language (UZ / RU / EN) and light/dark theme toggles apply across public pages.'
+    hiwS6Body: 'Language (UZ / RU / EN) and light/dark theme toggles apply across public pages.',
+    viewProfile: 'View Profile'
   }
 }
 

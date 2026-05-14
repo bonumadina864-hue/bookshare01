@@ -175,4 +175,23 @@ const handleRegister = () => {
   font-weight: 700;
   text-decoration: none;
 }
+
+@media (max-width: 600px) {
+  .register-page {
+    padding: 20px 16px;
+  }
+  .register-card {
+    padding: 32px 24px;
+    border-radius: 24px;
+  }
+  .title {
+    font-size: 26px;
+  }
+  .subtitle {
+    margin-bottom: 24px;
+  }
+  .submit-btn {
+    padding: 16px;
+  }
+}
 </style>

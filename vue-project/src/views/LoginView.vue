@@ -236,6 +236,7 @@ const handleLogin = () => {
   justify-content: center;
   gap: 12px;
   color: var(--text);
+  cursor: pointer;
 }
 
 .link {
@@ -250,5 +251,25 @@ const handleLogin = () => {
   font-weight: 600;
   text-align: center;
   margin: -8px 0 8px;
+}
+
+@media (max-width: 600px) {
+  .login-page {
+    padding: 20px 16px;
+  }
+  .login-card {
+    padding: 32px 24px;
+    border-radius: 24px;
+  }
+  .title {
+    font-size: 26px;
+  }
+  .subtitle {
+    margin-bottom: 24px;
+  }
+  .submit-btn {
+    padding: 16px;
+    margin-top: 24px;
+  }
 }
 </style>
