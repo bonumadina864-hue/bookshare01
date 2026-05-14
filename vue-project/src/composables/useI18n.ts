@@ -120,7 +120,7 @@ const translations: Record<string, any> = {
     hiwS5Title: '5. Boshqa sahifalar',
     hiwS5Body: 'Har bir kitob uchun `/book/:id` marshruti mavjud. `Profil` va `Sevimlilar` bo\'limlari shaxsiy ro\'yxat va saqlanganlar bilan ishlaydi. `Biz haqimizda` sahifasida loyiha maqsadi va afzalliklari matn ko\'rinishida berilgan.',
     hiwS6Title: '6. Interfeys',
-    hiwS6Body: 'Yuqoridagi til tanlovi (UZ / RU / EN) va tun/kun mavzusi (`ThemeToggle`) barcha ochiq sahifalarda ishlaydi. Savollar bo\'lsa, avvalo ushbu yo\'riqnoma va «Biz haqimizda» bo\'limlaridan foydalaning.'eb053937a35dbb04
+    hiwS6Body: 'Yuqoridagi til tanlovi (UZ / RU / EN) va tun/kun mavzusi (`ThemeToggle`) barcha ochiq sahifalarda ishlaydi. Savollar bo\'lsa, avvalo ushbu yo\'riqnoma va «Biz haqimizda» bo\'limlaridan foydalaning.'
   },
   RU: {
     about: 'О нас',
