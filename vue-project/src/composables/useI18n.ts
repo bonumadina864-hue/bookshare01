@@ -79,6 +79,32 @@ const translations: Record<string, any> = {
     deleteBook: 'O\'chirish',
     noBooks: 'Hali kitob joylamagansiz',
     confirmDelete: 'Haqiqatan ham o\'chirmoqchimisiz?',
+    searchDiscoveryPlaceholder: 'Kitob nomi, muallif yoki ISBN...',
+    popularSearches: 'Mashhur qidiruvlar',
+    recentSearches: 'Oxirgi qidiruvlar',
+    nearbyBooksMap: 'Yaqin atrofdagi kitoblar',
+    booksFoundRadius: '1.5 km radiusda {n} ta kitob topildi',
+    booksForYou: 'Sizga mos kitoblar',
+    booksFoundShort: '{n} ta kitob topildi',
+    priceRange: 'Narx oralig\'i',
+    fromPrice: 'Dan',
+    toPrice: 'Gacha',
+    children: 'Bolalar',
+    educational: 'O\'quv',
+    religion: 'Din',
+    allLanguages: 'Hammasi',
+    uzbekLang: 'O\'zbek',
+    russianLang: 'Rus',
+    englishLang: 'Ingliz',
+    conditionNew: 'Yangi',
+    conditionVeryGood: 'Juda yaxshi',
+    conditionGood: 'Yaxshi',
+    conditionFair: 'Qoniqarli',
+    menu: 'Menyu',
+    mapYouHere: 'Sizning joylashuvingiz',
+    mapSellerListed: 'Yaqin atrofda kitob joylashtirgan',
+    mapLoading: 'Xarita yuklanmoqda…',
+    mapGeoDenied: 'Joylashuv rad etildi — Toshkent atrofi ko‘rsatilmoqda',
     howItWorks: 'Qanday ishlaydi',
     howItWorksBadge: 'Yo\'riqnoma',
     howItWorksPageTitle: 'BookShare qanday ishlaydi?',
@@ -94,7 +120,7 @@ const translations: Record<string, any> = {
     hiwS5Title: '5. Boshqa sahifalar',
     hiwS5Body: 'Har bir kitob uchun `/book/:id` marshruti mavjud. `Profil` va `Sevimlilar` bo\'limlari shaxsiy ro\'yxat va saqlanganlar bilan ishlaydi. `Biz haqimizda` sahifasida loyiha maqsadi va afzalliklari matn ko\'rinishida berilgan.',
     hiwS6Title: '6. Interfeys',
-    hiwS6Body: 'Yuqoridagi til tanlovi (UZ / RU / EN) va tun/kun mavzusi (`ThemeToggle`) barcha ochiq sahifalarda ishlaydi. Savollar bo\'lsa, avvalo ushbu yo\'riqnoma va «Biz haqimizda» bo\'limlaridan foydalaning.'
+    hiwS6Body: 'Yuqoridagi til tanlovi (UZ / RU / EN) va tun/kun mavzusi (`ThemeToggle`) barcha ochiq sahifalarda ishlaydi. Savollar bo\'lsa, avvalo ushbu yo\'riqnoma va «Biz haqimizda» bo\'limlaridan foydalaning.'eb053937a35dbb04
   },
   RU: {
     about: 'О нас',
@@ -174,6 +200,32 @@ const translations: Record<string, any> = {
     deleteBook: 'Удалить',
     noBooks: 'Вы еще не добавили книг',
     confirmDelete: 'Вы уверены, что хотите удалить?',
+    searchDiscoveryPlaceholder: 'Название книги, автор или ISBN...',
+    popularSearches: 'Популярные запросы',
+    recentSearches: 'Недавние запросы',
+    nearbyBooksMap: 'Книги рядом',
+    booksFoundRadius: 'Найдено {n} книг в радиусе 1.5 км',
+    booksForYou: 'Подходящие вам книги',
+    booksFoundShort: 'Найдено книг: {n}',
+    priceRange: 'Диапазон цены',
+    fromPrice: 'От',
+    toPrice: 'До',
+    children: 'Детские',
+    educational: 'Учебные',
+    religion: 'Религия',
+    allLanguages: 'Все',
+    uzbekLang: 'Узбекский',
+    russianLang: 'Русский',
+    englishLang: 'Английский',
+    conditionNew: 'Новая',
+    conditionVeryGood: 'Очень хорошее',
+    conditionGood: 'Хорошее',
+    conditionFair: 'Удовлетворительное',
+    menu: 'Меню',
+    mapYouHere: 'Ваше местоположение',
+    mapSellerListed: 'Разместил(а) книги поблизости',
+    mapLoading: 'Загрузка карты…',
+    mapGeoDenied: 'Геолокация недоступна — показан район Ташкента',
     howItWorks: 'Как это работает',
     howItWorksBadge: 'Справка',
     howItWorksPageTitle: 'Как работает BookShare?',
@@ -269,6 +321,32 @@ const translations: Record<string, any> = {
     deleteBook: 'Delete',
     noBooks: 'No books added yet',
     confirmDelete: 'Are you sure you want to delete?',
+    searchDiscoveryPlaceholder: 'Book name, author, or ISBN...',
+    popularSearches: 'Popular searches',
+    recentSearches: 'Recent searches',
+    nearbyBooksMap: 'Books nearby',
+    booksFoundRadius: '{n} books found within 1.5 km',
+    booksForYou: 'Books for you',
+    booksFoundShort: '{n} books found',
+    priceRange: 'Price range',
+    fromPrice: 'From',
+    toPrice: 'To',
+    children: 'Children',
+    educational: 'Educational',
+    religion: 'Religion',
+    allLanguages: 'All',
+    uzbekLang: 'Uzbek',
+    russianLang: 'Russian',
+    englishLang: 'English',
+    conditionNew: 'New',
+    conditionVeryGood: 'Very good',
+    conditionGood: 'Good',
+    conditionFair: 'Fair',
+    menu: 'Menu',
+    mapYouHere: 'Your location',
+    mapSellerListed: 'Listed books nearby',
+    mapLoading: 'Loading map…',
+    mapGeoDenied: 'Location unavailable — showing Tashkent area',
     howItWorks: 'How it works',
     howItWorksBadge: 'Guide',
     howItWorksPageTitle: 'How does BookShare work?',
@@ -296,9 +374,15 @@ export function useI18n() {
     localStorage.setItem('lang', lang)
   }
 
-  const t = (key: string) => {
+  const t = (key: string, params?: Record<string, string | number>) => {
     const langSet = translations[currentLang.value] || translations['UZ']
-    return langSet[key] || key
+    let str: string = langSet[key] ?? key
+    if (params) {
+      for (const [k, v] of Object.entries(params)) {
+        str = str.replaceAll(`{${k}}`, String(v))
+      }
+    }
+    return str
   }
 
   return {

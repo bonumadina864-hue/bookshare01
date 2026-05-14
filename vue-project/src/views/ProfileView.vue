@@ -8,7 +8,7 @@ import { ref as dbRef, push, set, onValue } from 'firebase/database';
 const { t } = useI18n();
 const showAddBookModal = ref(false);
 const showDeleteConfirm = ref(false);
-const bookIdToDelete = ref<number | null>(null);
+const bookIdToDelete = ref<number | string | null>(null);
 
 const userName = ref(localStorage.getItem('userName') || 'Jasur');
 const isEditingName = ref(false);
@@ -16,7 +16,7 @@ const newName = ref(userName.value);
 const profilePic = ref(localStorage.getItem('profilePic') || '');
 
 // Mock user's books - Empty for fresh start
-const userBooks = ref([]);
+const userBooks = ref<any[]>([]);
 
 // Other stats
 const savedCount = ref(12);
@@ -58,7 +58,7 @@ const cancelEdit = () => {
   isEditingName.value = false;
 };
 
-const deleteBook = (id: number) => {
+const deleteBook = (id: number | string) => {
   bookIdToDelete.value = id;
   showDeleteConfirm.value = true;
 };
