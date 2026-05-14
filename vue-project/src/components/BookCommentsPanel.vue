@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, defineProps, defineEmits } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useI18n } from '../composables/useI18n';
 
 const props = defineProps<{

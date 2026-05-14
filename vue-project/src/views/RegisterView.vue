@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { useI18n } from '../composables/useI18n'
+import { withBasePath } from '../utils/baseHref'
 
 const { t } = useI18n()
-const router = useRouter()
 const name = ref('')
 const email = ref('')
 const password = ref('')
@@ -12,7 +11,15 @@ const confirmPassword = ref('')
 const errorMessage = ref('')
 
 const handleRegister = () => {
-  if (!email.value.includes('@')) {
+  errorMessage.value = ''
+  const nm = name.value.trim()
+  const em = email.value.trim()
+
+  if (nm.length < 2) {
+    errorMessage.value = "Ism kamida 2 ta belgidan iborat bo'lishi kerak"
+    return
+  }
+  if (!em.includes('@')) {
     errorMessage.value = "To'g'ri email kiriting"
     return
   }
@@ -24,11 +31,11 @@ const handleRegister = () => {
     errorMessage.value = "Parollar mos kelmadi"
     return
   }
-  errorMessage.value = ""
 
   localStorage.setItem('isLoggedIn', 'true')
-  localStorage.setItem('userName', name.value)
-  window.location.href = '/' // Redirect and refresh to ensure everything updates
+  localStorage.setItem('userName', nm)
+
+  window.location.assign(withBasePath('/'))
 }
 </script>
 
@@ -66,7 +73,7 @@ const handleRegister = () => {
       </form>
 
       <p class="footer-text">
-        {{ t('haveAccount') }} <router-link to="/login" class="link">{{ t('login') }}</router-link>
+        {{ t('haveAccount') }} <a :href="withBasePath('/login')" class="link">{{ t('login') }}</a>
       </p>
     </div>
   </div>
@@ -166,5 +173,6 @@ const handleRegister = () => {
 .link {
   color: var(--primary);
   font-weight: 700;
+  text-decoration: none;
 }
 </style>

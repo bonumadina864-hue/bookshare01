@@ -7,7 +7,7 @@ const currentSlide = ref(0)
 
 const slides = computed(() => [
   {
-    img: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&q=80&w=1000',
+    img: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&q=85&w=1200',
     title: t('heroTitle1'),
     desc: t('heroDesc1'),
     color: '#3b82f6'
@@ -19,7 +19,7 @@ const slides = computed(() => [
     color: '#10b981'
   },
   {
-    img: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=1000',
+    img: 'https://images.unsplash.com/photo-1707256786447-542b820c4d1d?auto=format&fit=crop&q=80&w=1000',
     title: t('heroTitle3'),
     desc: t('heroDesc3'),
     color: '#8b5cf6'

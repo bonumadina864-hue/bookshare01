@@ -5,6 +5,8 @@ import BookGrid from '../components/BookGrid.vue'
 import BookLandingPage from '../components/BookLandingPage.vue'
 import BookDetailSidePanel from '../components/BookDetailSidePanel.vue'
 import { booksData as initialBooks } from '../data/books'
+import { db, isFirebaseLive } from '../firebase'
+import { ref as dbRef, onValue } from 'firebase/database'
 
 const isLoggedIn = ref(false)
 const selectedBookId = ref<number | string | null>(null)
@@ -17,10 +19,24 @@ const selectedBook = computed(() => {
 
 onMounted(() => {
   isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true'
-  
-  const globalBooks = JSON.parse(localStorage.getItem('global_books') || '[]');
-  if (globalBooks.length > 0) {
-    books.value = [...initialBooks, ...globalBooks];
+
+  if (isFirebaseLive() && db) {
+    const globalBooksRef = dbRef(db, 'globalBooks');
+    onValue(globalBooksRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const remoteBooks = Object.keys(data).map(key => ({
+          ...data[key],
+          id: key
+        }));
+        books.value = [...initialBooks, ...remoteBooks];
+      }
+    });
+  } else {
+    const globalBooks = JSON.parse(localStorage.getItem('global_books') || '[]');
+    if (globalBooks.length > 0) {
+      books.value = [...initialBooks, ...globalBooks];
+    }
   }
 })
 </script>
@@ -28,7 +44,9 @@ onMounted(() => {
 <template>
   <div v-if="!isLoggedIn" class="home-layout" :class="{ 'panel-open': selectedBookId }">
     <div class="main-content">
-      <HeroSlider />
+      <div class="home-hero-wrapper">
+        <HeroSlider />
+      </div>
       <BookGrid @select="id => selectedBookId = id" />
     </div>
     <div class="side-panel-wrapper" v-if="selectedBookId">
@@ -51,6 +69,20 @@ onMounted(() => {
   flex: 1;
   transition: all 0.3s ease;
   overflow-x: hidden;
+  padding: 24px;
+}
+
+.home-hero-wrapper {
+  margin: 20px;
+  margin-bottom: 60px;
+  border-radius: 40px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.home-hero-wrapper :deep(.hero-slider) {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  padding: 48px 0 60px;
 }
 
 .side-panel-wrapper {

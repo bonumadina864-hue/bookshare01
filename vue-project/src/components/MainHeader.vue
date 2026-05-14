@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import ThemeToggle from './ThemeToggle.vue'
 import LanguageDropdown from './LanguageDropdown.vue'
 import { useI18n } from '../composables/useI18n'
+import { withBasePath } from '../utils/baseHref'
 
 const { t } = useI18n()
 
-const router = useRouter()
 const isLoggedIn = ref(false)
 const userName = ref('Jasur')
 
@@ -18,22 +17,25 @@ onMounted(() => {
 
 const logout = () => {
   localStorage.removeItem('isLoggedIn')
-  isLoggedIn.value = false
-  router.push('/')
-  window.location.reload() // Force refresh to update HomeView
+  window.location.assign(withBasePath('/'))
 }
 </script>
 
 <template>
   <header class="header">
     <div class="container header-container">
-      <router-link to="/" class="logo">
+      <div class="header-left" v-if="!isLoggedIn">
+        <nav class="nav nav-row" aria-label="Main">
+          <router-link to="/" class="logo">Book<span>share</span></router-link>
+          <router-link to="/" class="nav-link" active-class="nav-link-active">{{ t('home') }}</router-link>
+          <router-link to="/about" class="nav-link" active-class="nav-link-active">{{ t('about') }}</router-link>
+          <router-link to="/how-it-works" class="nav-link" active-class="nav-link-active">{{ t('howItWorks') }}</router-link>
+        </nav>
+      </div>
+
+      <router-link v-else to="/" class="logo">
         Book<span>share</span>
       </router-link>
-      
-      <nav class="nav" v-if="!isLoggedIn">
-        <router-link to="/about" class="nav-link">{{ t('about') }}</router-link>
-      </nav>
       
       <div class="logged-in-nav-wrapper" v-if="isLoggedIn">
         <div class="logged-in-nav">
@@ -84,8 +86,8 @@ const logout = () => {
         <LanguageDropdown />
         <ThemeToggle />
         <template v-if="!isLoggedIn">
-          <router-link to="/login" class="login-btn">{{ t('login') }}</router-link>
-          <router-link to="/register" class="register-btn">{{ t('register') }}</router-link>
+          <a class="login-btn" :href="withBasePath('/login')">{{ t('login') }}</a>
+          <a class="register-btn" :href="withBasePath('/register')">{{ t('register') }}</a>
         </template>
         <template v-else>
           <div class="user-profile-summary">
@@ -119,6 +121,26 @@ const logout = () => {
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  gap: 24px;
+}
+
+.header-left {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+}
+
+.nav-row {
+  flex: 1;
+  flex-wrap: wrap;
+  column-gap: 2rem;
+  row-gap: 0.75rem;
 }
 
 .logo {
@@ -127,15 +149,11 @@ const logout = () => {
   color: var(--primary);
   text-decoration: none;
   letter-spacing: -1px;
+  flex-shrink: 0;
 }
 
 .logo span {
   color: var(--text-heading);
-}
-
-.nav {
-  display: flex;
-  gap: 32px;
 }
 
 .nav-link {
@@ -149,16 +167,25 @@ const logout = () => {
   color: var(--primary);
 }
 
+.nav-link-active {
+  color: var(--primary);
+}
+
 .actions {
   display: flex;
   align-items: center;
   gap: 16px;
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
 }
 
 .login-btn {
   color: var(--text-heading);
   font-weight: 700;
   padding: 10px 20px;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .register-btn {
@@ -167,6 +194,11 @@ const logout = () => {
   padding: 10px 20px;
   border-radius: 10px;
   font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition: all 0.2s;
   box-shadow: 0 4px 12px rgba(45, 49, 166, 0.15);
 }

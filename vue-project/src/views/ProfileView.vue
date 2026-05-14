@@ -2,6 +2,8 @@
 import { ref, onMounted, computed } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import AddBookModal from '../components/AddBookModal.vue';
+import { db, isFirebaseLive } from '../firebase';
+import { ref as dbRef, push, set, onValue } from 'firebase/database';
 
 const { t } = useI18n();
 const showAddBookModal = ref(false);
@@ -69,10 +71,27 @@ const confirmDelete = () => {
     userBooks.value = userBooks.value.filter(b => b.id !== bookIdToDelete.value);
     localStorage.setItem('myUploadedBooks', JSON.stringify(userBooks.value));
 
-    // 2. LocalStorage global_books dan o'chirish
-    let globalBooks = JSON.parse(localStorage.getItem('global_books') || '[]');
-    globalBooks = globalBooks.filter((b: any) => b.id !== bookIdToDelete.value && b.title !== bookToRemove?.title);
-    localStorage.setItem('global_books', JSON.stringify(globalBooks));
+    // 2. Global bazadan o'chirish (Firebase yoki localStorage fallback)
+    if (isFirebaseLive() && db) {
+      // Firebase dan o'chirish (id bo'yicha)
+      const globalBooksRef = dbRef(db, 'globalBooks');
+      onValue(globalBooksRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          Object.keys(data).forEach(key => {
+            // Agar id yoki sarlavha mos kelsa o'chirish
+            if (data[key].id === bookIdToDelete.value || data[key].title === bookToRemove?.title) {
+              set(dbRef(db, `globalBooks/${key}`), null);
+            }
+          });
+        }
+      }, { onlyOnce: true });
+    } else {
+      // LocalStorage global_books dan o'chirish
+      let globalBooks = JSON.parse(localStorage.getItem('global_books') || '[]');
+      globalBooks = globalBooks.filter((b: any) => b.id !== bookIdToDelete.value && b.title !== bookToRemove?.title);
+      localStorage.setItem('global_books', JSON.stringify(globalBooks));
+    }
 
     showDeleteConfirm.value = false;
     bookIdToDelete.value = null;
@@ -103,8 +122,7 @@ const handleSaveBook = (bookData: any) => {
   localStorage.setItem('myUploadedBooks', JSON.stringify(userBooks.value));
 
   // Push to global store (Firebase or localStorage fallback)
-  const isFirebaseConfigured = !db.app.options.apiKey?.includes('SINING_API_KEY');
-  if (isFirebaseConfigured) {
+  if (isFirebaseLive() && db) {
     const globalBooksRef = dbRef(db, 'globalBooks');
     const newBookRef = push(globalBooksRef);
     set(newBookRef, newBook);
